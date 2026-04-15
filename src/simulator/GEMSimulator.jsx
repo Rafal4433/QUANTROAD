@@ -25,12 +25,24 @@ const DEFAULT_PARAMS = {
 export function GEMSimulator() {
   const [params, setParams]           = useState(DEFAULT_PARAMS);
   const [historicalData, setHistoricalData] = useState([]);
+  const [dataError, setDataError]     = useState(null);
 
   useEffect(() => {
     fetch('/.netlify/functions/historical-data')
-      .then(res => res.json())
-      .then(data => setHistoricalData(data))
-      .catch(err => console.error("Failed to load historical data:", err));
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('Otrzymano pustą odpowiedź z serwera');
+        }
+        setHistoricalData(data);
+      })
+      .catch(err => {
+        console.error("Failed to load historical data:", err);
+        setDataError(err.message);
+      });
   }, []);
 
   // ── Run backtest with memoization ─────────────────────────────────────
@@ -53,8 +65,10 @@ export function GEMSimulator() {
 
       <main className="main-content">
         {!result ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            Loading historical market data...
+          <div style={{ padding: '40px', textAlign: 'center', color: dataError ? 'var(--accent-primary, #ff4444)' : 'var(--text-muted)' }}>
+            {dataError
+              ? `Błąd ładowania danych: ${dataError}`
+              : 'Loading historical market data...'}
           </div>
         ) : (
           <>
