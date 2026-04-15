@@ -22,24 +22,6 @@
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body, #root {
-  height: 100%;
-  color: var(--text-primary);
-  font-family: var(--font-ui);
-  font-size: 13pt;
-  font-weight: 300;
-  line-height: 1.65;
-  -webkit-font-smoothing: antialiased;
-  overflow: hidden;
-  background-color: var(--bg-base);
-  background-image: linear-gradient(to top, rgba(46, 49, 65, 0.8), rgba(46, 49, 65, 0.8)), url("/images/bg.jpg");
-  background-size: auto, cover;
-  background-attachment: fixed, fixed;
-  background-position: center, center;
 }
 
 /* ─── Scrollbar Styling ──────────────────────────────────────────────── */
@@ -50,47 +32,221 @@ html, body, #root {
 
 /* ─── Layout ─────────────────────────────────────────────────────────── */
 .app-shell {
-  display: grid;
-  grid-template-rows: 52px 1fr;
-  grid-template-columns: 320px 1fr;
-  grid-template-areas:
-    "topbar topbar"
-    "sidebar main";
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-}
-
-.topbar {
-  grid-area: topbar;
-  background: var(--bg-surface);
-  border-bottom: 2px solid var(--border);
   display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 12px;
-  z-index: 50;
-  position: sticky;
-  top: 0;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+  background-color: transparent;
 }
 
 .sidebar {
-  grid-area: sidebar;
-  background: var(--bg-surface);
-  border-right: 2px solid var(--border);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px 24px;
+}
+
+/* ─── GEM Simulator Controls ─────────────────────────────────────────── */
+.sim-sidebar {
+  gap: 24px;
+}
+
+.sim-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  backdrop-filter: blur(4px);
+}
+
+.sim-panel-wide {
+  grid-column: 1 / -1;
+}
+
+.sim-panel-title {
+  margin-bottom: 0.9rem;
+}
+
+.sim-panel-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.sim-field {
+  margin-bottom: 0;
+}
+
+.sim-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.sim-row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.sim-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.sim-chip {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+  padding: 0.55rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 0.1rem;
+  cursor: pointer;
+  min-width: 160px;
+  transition: all 0.2s ease;
+}
+
+.sim-chip:hover {
+  border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sim-chip.active {
+  border-color: var(--accent-blue);
+  background: rgba(137, 196, 244, 0.15);
+}
+
+.sim-chip.dimmed {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sim-chip-main {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.sim-chip-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.sim-toggle-btn {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-toggle-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.sim-toggle-btn.active {
+  border-color: var(--accent-warn);
+  color: var(--accent-warn);
+  background: rgba(245, 215, 110, 0.08);
+}
+
+.sim-segmented {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sim-segment {
+  flex: 1;
+  border: none;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.62rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-segment:last-child {
+  border-right: none;
+}
+
+.sim-segment:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.sim-segment.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.sim-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.sim-slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.sim-slider-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.sim-range {
+  margin: 0 0 0.45rem 0;
+}
+
+.sim-hint {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.sim-warning {
+  margin-top: 0.45rem;
+  color: var(--accent-warn);
+}
+
+.sim-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
 }
 
 .main-content {
-  grid-area: main;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 30px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -268,7 +424,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .num-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.025);
-  border-radius: 0;
+  border-radius: 8px;
   border: none;
   border: solid 2px rgba(255, 255, 255, 0.125);
   color: inherit;
@@ -292,7 +448,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   align-items: center;
   justify-content: space-between;
   padding: 1em;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 8px;
   border: 2px solid var(--border);
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
@@ -315,10 +472,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .toggle-switch {
-  width: 3.5em;
-  height: 1.75em;
+  width: 36px;
+  height: 20px;
   background: var(--border-strong);
-  border-radius: 1.75em;
+  border-radius: 10px;
   position: relative;
   transition: background 0.2s ease-in-out;
   flex-shrink: 0;
@@ -331,17 +488,17 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .toggle-switch::after {
   content: '';
   position: absolute;
-  top: 0.25em;
-  left: 0.25em;
-  width: 1.25em;
-  height: 1.25em;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--bg-base);
   transition: transform 0.2s ease-in-out;
 }
 
 .toggle-switch.on::after {
-  transform: translateX(1.75em);
+  transform: translateX(16px);
 }
 
 /* ─── Asset Cards ────────────────────────────────────────────────────── */
@@ -362,14 +519,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .asset-ticker {
   font-family: var(--font-ui);
-  font-size: 1em;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .asset-name {
   font-family: var(--font-ui);
-  font-size: 0.8em;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -682,6 +839,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
     transition: left 0.28s cubic-bezier(.4,0,.2,1);
     box-shadow: 4px 0 24px rgba(0,0,0,0.5);
   }
+  .sim-two-col {
+    grid-template-columns: 1fr;
+  }
+  .sim-chip {
+    min-width: 100%;
+  }
   .sidebar.open {
     left: 0;
   }
@@ -759,3 +922,354 @@ input[type="range"]::-webkit-slider-thumb:hover {
   stroke: rgba(255,255,255,0.04) !important;
 }
 .recharts-text { font-family: var(--font-mono) !important; }
+
+/* ─── Modern Simulator Controls (GEM) ─────────────────────────────────── */
+.sim-light-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  font-family: var(--font-ui), system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+}
+
+.sim-light-wrapper *, .sim-light-wrapper *::before, .sim-light-wrapper *::after {
+  box-sizing: border-box;
+}
+
+.sl-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.sl-title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sl-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 900px) {
+  .sl-grid-2col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.sl-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-assets-divider {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (min-width: 900px) {
+  .sl-assets-divider {
+    flex-direction: row;
+    gap: 32px;
+  }
+  .sl-assets-group {
+    flex: 1;
+  }
+}
+
+.sl-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 12px 0;
+}
+
+.sl-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sl-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border);
+  border-radius: 99px; /* Pill shape */
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.sl-chip > * {
+  pointer-events: none;
+}
+
+.sl-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+}
+
+.sl-chip-icon {
+  font-size: 12px;
+}
+
+.sl-chip-ticker {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-primary);
+  letter-spacing: 0.03em;
+}
+
+.sl-chip-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* Active Chips */
+.sl-chip-risk.active {
+  background: rgba(137, 196, 244, 0.15);
+  border-color: var(--accent-blue);
+}
+.sl-chip-risk.active .sl-chip-name,
+.sl-chip-risk.active .sl-chip-ticker {
+  color: var(--accent-blue);
+}
+
+.sl-chip-safe.active {
+  background: rgba(46, 204, 113, 0.15);
+  border-color: #2ecc71;
+}
+.sl-chip-safe.active .sl-chip-name,
+.sl-chip-safe.active .sl-chip-ticker {
+  color: #2ecc71;
+}
+
+.sl-chip.dim-safe {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sl-helper-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Fields & Inputs */
+.sl-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-mt { margin-top: 20px; }
+.sl-mt-auto { margin-top: auto; padding-top: 24px; }
+
+.sl-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.sl-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 12px;
+  height: 38px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+}
+.sl-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary);
+}
+
+.sl-inner-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Slider */
+.sl-slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.sl-val {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sl-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  outline: none;
+  margin: 8px 0;
+}
+
+.sl-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.sl-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.sl-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Segmented Control */
+.sl-segmented {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.sl-seg-btn {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sl-seg-btn:hover {
+  color: var(--text-primary);
+}
+
+.sl-seg-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* Composite Text */
+.sl-composite-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+/* Toggle Switch */
+.sl-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.sl-toggle:hover {
+  background: var(--bg-card-hover);
+}
+
+.sl-toggle-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sl-toggle-head {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sl-toggle-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.sl-toggle-switch-wrap {
+  position: relative;
+}
+
+.sl-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.sl-toggle-switch {
+  width: 36px;
+  height: 20px;
+  background: var(--border-strong);
+  border-radius: 20px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.sl-toggle-switch.on {
+  background: var(--text-primary);
+}
+
+.sl-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-base);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.sl-toggle-switch.on .sl-toggle-knob {
+  transform: translateX(16px);
+}

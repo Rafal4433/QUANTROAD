@@ -143,7 +143,7 @@ export function EquityCurveChart({ result, ikeActive, benchmark }) {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={320}>
+      <ResponsiveContainer width="100%" height={450}>
         <ComposedChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 4 }} syncId="equityCurve">
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -214,7 +214,7 @@ export function EquityCurveChart({ result, ikeActive, benchmark }) {
       <div style={{ marginTop: '20px', marginBottom: '8px' }}>
         <div className="chart-title" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Drawdown Underwater Curve</div>
       </div>
-      <ResponsiveContainer width="100%" height={120}>
+      <ResponsiveContainer width="100%" height={140}>
         <ComposedChart data={data} margin={{ top: 0, right: 8, left: 0, bottom: 0 }} syncId="equityCurve">
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="date" hide={true} />

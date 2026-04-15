@@ -1,4 +1,4 @@
-import { runBacktest } from './src/engine/gemEngine.js';
+import { runBacktest } from './gemEngine.js';
 import fs from 'fs';
 try {
   const data = JSON.parse(fs.readFileSync('./public/historical_data.json'));
