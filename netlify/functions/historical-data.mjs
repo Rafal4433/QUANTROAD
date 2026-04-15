@@ -1,9 +1,7 @@
 import { getStore } from '@netlify/blobs';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// Fallback: esbuild bundluje JSON inline — działa niezależnie od __dirname
+import fallbackData from '../../public/historical_data.json';
 
 export default async function handler() {
   const headers = {
@@ -24,16 +22,6 @@ export default async function handler() {
     console.warn('[historical-data] Blobs unavailable, using fallback:', err.message);
   }
 
-  // Fallback: statyczny plik z repozytorium (bundlowany razem z funkcją przez esbuild)
-  try {
-    const fallbackPath = join(__dirname, '../../public/historical_data.json');
-    const fallback = readFileSync(fallbackPath, 'utf-8');
-    return new Response(fallback, { status: 200, headers });
-  } catch (err) {
-    console.error('[historical-data] Fallback also failed:', err.message);
-    return new Response(JSON.stringify({ error: 'Data unavailable' }), {
-      status: 503,
-      headers,
-    });
-  }
+  // Fallback: statyczny JSON zbundlowany przez esbuild
+  return new Response(JSON.stringify(fallbackData), { status: 200, headers });
 }
