@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { runBacktest }      from '../backtest/gemEngine.js';
 import { SimulatorControls }  from './SimulatorControls.jsx';
 import { KPIRow }           from './KPIRow.jsx';
 import { EquityCurveChart } from './EquityCurveChart.jsx';
 import { RebalancingLog }   from './RebalancingLog.jsx';
 import { CostBreakdown }    from './CostBreakdown.jsx';
+import historicalData       from '../../public/historical_data.json';
 
 const DEFAULT_PARAMS = {
   lookback:        12,
@@ -23,26 +24,17 @@ const DEFAULT_PARAMS = {
 };
 
 export function GEMSimulator() {
-  const [params, setParams]           = useState(DEFAULT_PARAMS);
-  const [historicalData, setHistoricalData] = useState([]);
-
-  useEffect(() => {
-    fetch('/.netlify/functions/historical-data')
-      .then(res => res.json())
-      .then(data => setHistoricalData(data))
-      .catch(err => console.error("Failed to load historical data:", err));
-  }, []);
+  const [params, setParams] = useState(DEFAULT_PARAMS);
 
   // ── Run backtest with memoization ─────────────────────────────────────
   const result = useMemo(() => {
-    if (!historicalData || historicalData.length === 0) return null;
     try {
       return runBacktest({ ...params, historicalData });
     } catch (e) {
       console.error('Backtest error:', e);
       return null;
     }
-  }, [params, historicalData]);
+  }, [params]);
 
   return (
     <div className="app-shell">
@@ -52,11 +44,7 @@ export function GEMSimulator() {
       />
 
       <main className="main-content">
-        {!result ? (
-          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            Loading historical market data...
-          </div>
-        ) : (
+        {result ? (
           <>
             {/* ── Equity Curve ─────────────────────────────────────────── */}
             <EquityCurveChart result={result} ikeActive={params.ikeActive} benchmark={params.benchmark} />
@@ -64,7 +52,7 @@ export function GEMSimulator() {
             {/* ── Lower Section: KPIs, Logs, Costs ──────────────────── */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
               <KPIRow kpi={result?.kpi} ikeActive={params.ikeActive} />
-              
+
               <div className="lower-grid" style={{ gridTemplateColumns: '1.2fr 2fr' }}>
                 <div style={{ position: 'relative' }}>
                   <div style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
@@ -75,6 +63,10 @@ export function GEMSimulator() {
               </div>
             </div>
           </>
+        ) : (
+          <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+            Błąd silnika backtestu. Sprawdź konsolę.
+          </div>
         )}
 
         {/* ── Footer ───────────────────────────────────────────────── */}
