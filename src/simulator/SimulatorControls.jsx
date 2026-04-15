@@ -87,7 +87,7 @@ export function SimulatorControls({ params, setParams }) {
     <div className="sim-light-wrapper">
       {/* SECTION 1: Asset Universe */}
       <section className="sl-panel sl-col-full">
-        <h3 className="sl-title">Asset Universe</h3>
+        <h3 className="sl-title">Wszechświat aktywów</h3>
         
         <div className="sl-assets-divider">
           <div className="sl-assets-group">
@@ -150,7 +150,7 @@ export function SimulatorControls({ params, setParams }) {
       <div className="sl-grid-2col">
         {/* SECTION 2: Trend & Benchmark */}
         <section className="sl-panel sl-stack">
-          <h3 className="sl-title">Trend & Benchmark</h3>
+          <h3 className="sl-title">Trend i punkt odniesienia</h3>
           
           <div className="sl-field">
             <label className="sl-label">Benchmark</label>
@@ -176,7 +176,7 @@ export function SimulatorControls({ params, setParams }) {
             <label className="sl-toggle" htmlFor="ensembleMomentum">
               <div className="sl-toggle-text">
                 <span className="sl-toggle-head">Algorytm trendu</span>
-                <span className="sl-toggle-sub">Momentum composite: 1M · 3M · 6M · 12M</span>
+                <span className="sl-toggle-sub">Momentum złożone: 1M · 3M · 6M · 12M</span>
               </div>
               <div className="sl-toggle-switch-wrap">
                 <input
@@ -197,23 +197,23 @@ export function SimulatorControls({ params, setParams }) {
           {!params.ensembleMomentum && (
             <div className="sl-field sl-mt">
               <LightSlider
-                label="Lookback Period"
+                label="Okres analizy"
                 value={params.lookback || 12}
                 min={1} max={36} step={1}
                 onChange={setParam('lookback')}
-                displayValue={`${params.lookback || 12} mc`}
+                displayValue={`${params.lookback || 12} mies.`}
               />
             </div>
           )}
 
           <div className="sl-field sl-mt">
             <LightSlider
-              label="Whipsaw Buffer"
+              label="Bufor histereezy"
               value={params.whipsawBuffer || 0}
               min={0} max={10} step={0.5}
               onChange={setParam('whipsawBuffer')}
               displayValue={`${Number(params.whipsawBuffer || 0).toFixed(1)}%`}
-              hint="Nadwyżka zwrotu wymagana do przełączenia stanu"
+              hint="Nadwyżka zwrotu wymagana do przełączenia aktywu"
             />
           </div>
         </section>
@@ -229,7 +229,7 @@ export function SimulatorControls({ params, setParams }) {
 
           <div className="sl-mt">
             <LightSlider
-              label="Margin Leverage"
+              label="Dźwignia marginowa"
               value={params.leverage || 1.0}
               min={1.0} max={3.0} step={0.1}
               onChange={setParam('leverage')}

@@ -43,12 +43,12 @@ const PLN = (v) => v !== undefined
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   const labels = {
-    gem:      'GEM    ',
-    bench:    'BENCH  ',
-    ike:      'IKE    ',
-    invested: 'WKŁAD  ',
-    dd:       'DD GEM ',
-    benchDd:  'DD BNCH',
+    gem:      'GEM      ',
+    bench:    'BENCHMARK',
+    ike:      'IKE      ',
+    invested: 'WKŁAD    ',
+    dd:       'DD GEM   ',
+    benchDd:  'DD BENCH ',
   };
   return (
     <div style={{
@@ -104,9 +104,9 @@ export function EquityCurveChart({ result, ikeActive, benchmark }) {
     <div className="chart-container">
       <div className="chart-header">
         <div>
-          <div className="chart-title">Equity Curve — GEM vs {benchLabel}{ikeActive ? ' vs IKE' : ''}</div>
+          <div className="chart-title">Krzywa wzrostu — GEM vs {benchLabel}{ikeActive ? ' vs IKE' : ''}</div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)', marginTop: '3px' }}>
-            DCA-weighted · Net of fees & tax · PLN
+            Ważona DCA · Po opłatach i podatku · PLN
           </div>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -212,7 +212,7 @@ export function EquityCurveChart({ result, ikeActive, benchmark }) {
       </ResponsiveContainer>
 
       <div style={{ marginTop: '20px', marginBottom: '8px' }}>
-        <div className="chart-title" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Drawdown Underwater Curve</div>
+        <div className="chart-title" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Krzywa obsunięć kapitału</div>
       </div>
       <ResponsiveContainer width="100%" height={140}>
         <ComposedChart data={data} margin={{ top: 0, right: 8, left: 0, bottom: 0 }} syncId="equityCurve">

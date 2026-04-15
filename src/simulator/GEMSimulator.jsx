@@ -79,8 +79,8 @@ export function GEMSimulator() {
           marginTop: '60px',
           borderTop: '1px solid var(--border)',
         }}>
-          GEM Simulator v1.0 · For Polish Residents · Educational Use Only · Not Financial Advice
-          <br />Built with React + Recharts + Yahoo Finance · All logic runs client-side · No data leaves your browser
+          Symulator GEM v1.0 · Dla polskich inwestorów · Wyłącznie cel edukacyjny · Nie stanowi porady finansowej
+          <br />Zbudowany w React + Recharts + Yahoo Finance · Cała logika działa po stronie klienta · Żadne dane nie opuszczają przeglądarki
         </div>
       </main>
     </div>

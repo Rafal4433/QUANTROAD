@@ -39,7 +39,7 @@ export function KPIRow({ kpi, ikeActive }) {
         icon={cagrVal > 0 ? TrendingUp : TrendingDown}
       />
       <KPICard
-        label="Max Drawdown"
+        label="Maks. obsunięcie"
         value={g.maxDrawdown}
         unit="%"
         sub={`Benchmark: ${kpi?.bench?.maxDrawdown}%`}
@@ -47,7 +47,7 @@ export function KPIRow({ kpi, ikeActive }) {
         icon={ArrowDown}
       />
       <KPICard
-        label="Sharpe Ratio"
+        label="Współczynnik Sharpe'a"
         value={sharpe > 0 ? `+${g.sharpe}` : g.sharpe}
         unit=""
         sub={`Benchmark: ${kpi?.bench?.sharpe}${ikeActive ? ` · IKE: ${kpi?.ike?.sharpe}` : ''}`}
@@ -55,7 +55,7 @@ export function KPIRow({ kpi, ikeActive }) {
         icon={TrendingUp}
       />
       <KPICard
-        label="Ulcer Perf. Index"
+        label="Indeks Ulcera (UPI)"
         value={upiVal > 0 ? `+${g.upi}` : g.upi}
         unit=""
         sub={`UI: ${g.ulcerIndex} · (CAGR−Rf)/UI`}

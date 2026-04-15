@@ -4,7 +4,7 @@ import { ArrowUpRight, ArrowDownRight, Download } from 'lucide-react';
 export function RebalancingLog({ log }) {
   if (!log || log.length === 0) return (
     <div style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '11px', padding: '8px 0' }}>
-      No rebalancing events yet.
+      Brak zdarzeń rebalansowania.
     </div>
   );
 
@@ -50,9 +50,9 @@ export function RebalancingLog({ log }) {
     <div className="chart-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <div className="chart-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <div className="chart-title">Rebalancing Log</div>
+          <div className="chart-title">Dziennik rebalansowania</div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)' }}>
-            {log.length} events
+            {log.length} zdarzeń
           </div>
         </div>
         <button 
@@ -80,7 +80,7 @@ export function RebalancingLog({ log }) {
               {entry.action !== 'PAY' && <span className="rebal-roc">{entry.roc}</span>}
               {entry.tax > 0 && (
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--accent-danger)', marginLeft: 'auto' }}>
-                  -{(entry.tax).toLocaleString('pl-PL', { maximumFractionDigits: 0 })} PLN tax
+                  -{(entry.tax).toLocaleString('pl-PL', { maximumFractionDigits: 0 })} PLN podatek
                 </span>
               )}
             </div>

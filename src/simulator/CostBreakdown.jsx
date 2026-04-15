@@ -69,43 +69,43 @@ export function CostBreakdown({ costs, metadata, liquidation, benchmark }) {
   const totalDeployed = metadata?.totalCapitalDeployed ?? 0;
 
   const gemRows = [
-    { label: 'Broker & Spread Fee', pln: `-${PLN(costs.brokerFeePLN + costs.fxSpreadPLN)}`, secondary: `Cost` },
-    { label: 'Realized Tax Paid',   pln: `-${PLN(costs.taxPaidPLN)}`, secondary: `Already Paid` },
-    { label: 'End Value (Gross)',   pln: PLN(liquidation.gemFinalGross), secondary: `Unrealized` },
-    { label: 'Liquidation Tax',     pln: `-${PLN(liquidation.gemPendingTax)}`, secondary: `Pending (19%)` },
-    { label: 'Total Value (Net)',   pln: PLN(liquidation.gemFinalNet), highlight: true },
-    { label: 'Return (Brutto)',     pln: PCT(liquidation.gemReturnGross), isReturn: true },
-    { label: 'Return (Netto)',      pln: PCT(liquidation.gemReturnNet), isReturn: true },
+    { label: 'Opłaty brokera i spread', pln: `-${PLN(costs.brokerFeePLN + costs.fxSpreadPLN)}`, secondary: `Koszt` },
+    { label: 'Zapłacony podatek',        pln: `-${PLN(costs.taxPaidPLN)}`, secondary: `Już zapłacony` },
+    { label: 'Wartość końcowa (brutto)', pln: PLN(liquidation.gemFinalGross), secondary: `Niezrealizowane` },
+    { label: 'Podatek likwidacyjny',     pln: `-${PLN(liquidation.gemPendingTax)}`, secondary: `Do zapłaty (19%)` },
+    { label: 'Łączna wartość (netto)',   pln: PLN(liquidation.gemFinalNet), highlight: true },
+    { label: 'Zwrot (brutto)',           pln: PCT(liquidation.gemReturnGross), isReturn: true },
+    { label: 'Zwrot (netto)',            pln: PCT(liquidation.gemReturnNet), isReturn: true },
   ];
 
   const benchRows = [
-    { label: 'Broker & Spread Fee', pln: `-${PLN(costs.bBrokerFeePLN + costs.bFxSpreadPLN)}`, secondary: `Cost` },
-    { label: 'Realized Tax Paid',   pln: '-0 PLN', secondary: `Buy & Hold` },
-    { label: 'End Value (Gross)',   pln: PLN(liquidation.benchFinalGross), secondary: `Unrealized` },
-    { label: 'Liquidation Tax',     pln: `-${PLN(liquidation.benchPendingTax)}`, secondary: `Pending (19%)` },
-    { label: 'Total Value (Net)',   pln: PLN(liquidation.benchFinalNet), highlight: true },
-    { label: 'Return (Brutto)',     pln: PCT(liquidation.benchReturnGross), isReturn: true },
-    { label: 'Return (Netto)',      pln: PCT(liquidation.benchReturnNet), isReturn: true },
+    { label: 'Opłaty brokera i spread', pln: `-${PLN(costs.bBrokerFeePLN + costs.bFxSpreadPLN)}`, secondary: `Koszt` },
+    { label: 'Zapłacony podatek',        pln: '-0 PLN', secondary: `Kup i trzymaj` },
+    { label: 'Wartość końcowa (brutto)', pln: PLN(liquidation.benchFinalGross), secondary: `Niezrealizowane` },
+    { label: 'Podatek likwidacyjny',     pln: `-${PLN(liquidation.benchPendingTax)}`, secondary: `Do zapłaty (19%)` },
+    { label: 'Łączna wartość (netto)',   pln: PLN(liquidation.benchFinalNet), highlight: true },
+    { label: 'Zwrot (brutto)',           pln: PCT(liquidation.benchReturnGross), isReturn: true },
+    { label: 'Zwrot (netto)',            pln: PCT(liquidation.benchReturnNet), isReturn: true },
   ];
 
   return (
     <div className="chart-container" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="chart-header">
-        <div className="chart-title">Exit Performance Breakdown</div>
+        <div className="chart-title">Podsumowanie wyników przy wyjściu</div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>
-          Detailed values upon full final liquidation
+          Szczegółowe wartości przy pełnej likwidacji portfela
         </div>
       </div>
 
       {/* Summary stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '14px' }}>
-        <MetaStat label="Capital Deployed"  value={`${Math.round(totalDeployed / 1000)}K PLN`} />
-        <MetaStat label="Final GEM Netto"   value={`${Math.round(liquidation.gemFinalNet / 1000)}K PLN`} accent />
+        <MetaStat label="Zainwestowany kapitał" value={`${Math.round(totalDeployed / 1000)}K PLN`} />
+        <MetaStat label="Wartość GEM netto"      value={`${Math.round(liquidation.gemFinalNet / 1000)}K PLN`} accent />
       </div>
 
       {/* Two-column cost detail */}
       <div style={{ display: 'flex', gap: '20px', flex: 1, minHeight: 0, overflowY: 'auto', paddingRight: '4px' }}>
-        <CostSection title="GEM Strategy" color="var(--accent-warn)" rows={gemRows} />
+        <CostSection title="Strategia GEM" color="var(--accent-warn)" rows={gemRows} />
         <div style={{ width: '1px', background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
         <CostSection title={benchLabel} color="var(--accent-blue)" rows={benchRows} />
       </div>

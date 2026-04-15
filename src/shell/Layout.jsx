@@ -17,9 +17,9 @@ export function Layout() {
         <div className="inner">
           <h2>Menu</h2>
           <ul className="links">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/blog/gem">GEM Simulator</Link></li>
-            <li><a href="#">About</a></li>
+            <li><Link to="/">Strona główna</Link></li>
+            <li><Link to="/blog/gem">Symulator GEM</Link></li>
+            <li><a href="#">O projekcie</a></li>
           </ul>
           <a href="#" className="close">Close</a>
         </div>
@@ -32,7 +32,7 @@ export function Layout() {
       <section id="footer">
         <div className="inner">
           <ul className="copyright">
-            <li>&copy; QuantRoad. All rights reserved.</li><li>Design: HTML5 UP & Polish Quants</li>
+            <li>&copy; QuantRoad. Wszelkie prawa zastrzeżone.</li><li>Projekt: HTML5 UP & Polish Quants</li>
           </ul>
         </div>
       </section>

@@ -1,0 +1,40 @@
+name: Update Historical Data
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # codziennie 06:00 UTC
+  workflow_dispatch:       # ręczne uruchomienie z GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest market data
+        run: npm run update-data
+
+      - name: Commit if data changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/historical_data.json
+          if git diff --cached --quiet; then
+            echo "No data changes, skipping commit."
+          else
+            git commit -m "chore: update historical data $(date -u '+%Y-%m-%d')"
+            git push
+          fi
