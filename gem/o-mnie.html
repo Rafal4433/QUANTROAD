@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>O mnie · Quant Road</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="qr.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="components/icons.jsx"></script>
+<script type="text/babel" src="components/QRData.jsx"></script>
+<script type="text/babel" src="components/QRLayout.jsx"></script>
+<script type="text/babel">
+function AboutPage(){
+  const a = QRData.author;
+  return (
+    <>
+      <QRTopNav active="about"/>
+
+      <section className="border-b hairline">
+        <div className="max-w-[1400px] mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-7">
+            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">o autorze</div>
+            <h1 className="serif text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.02em]">
+              Cześć, jestem <span className="italic text-[var(--accent)]">{a.name.split(' ')[0]}</span>.
+            </h1>
+
+            <div className="mt-7 space-y-5 text-[15px] text-[var(--ink-dim)] leading-[1.7] max-w-[60ch]">
+              <p>
+                Przez 7 lat byłem quantem w funduszu hedgingowym w Londynie — pisałem modele
+                wykonawcze i taktyczne dla equity i FX. W 2019 wróciłem do Polski i zacząłem
+                stosować to, co umiałem, na własnym portfelu.
+              </p>
+              <p>
+                Quant Road to <span className="text-[var(--ink)]">moje notatki publiczne</span>. Nie sprzedaję sygnałów ani kursów.
+                Nie dostaję prowizji od brokerów. Po prostu lubię, jak liczby się zgadzają,
+                i lubię, gdy ktoś mnie poprawia, kiedy się mylę.
+              </p>
+              <p>
+                Filozofia jest prosta: <em className="not-italic text-[var(--ink)]">jeśli nie mogę policzyć tego w arkuszu po podatkach, nie ma mnie tam.</em> Dlatego każda strategia tutaj ma kod, dane i pełen rachunek kosztów.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div>
+                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Piszę od</div>
+                <div className="display text-[36px] tnum mt-1.5">{a.since}</div>
+              </div>
+              <div>
+                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Artykułów</div>
+                <div className="display text-[36px] tnum mt-1.5">{a.posts}</div>
+              </div>
+              <div>
+                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Czytelników</div>
+                <div className="display text-[36px] tnum mt-1.5">{(a.readers/1000).toFixed(1)}<span className="text-[18px] text-[var(--ink-mute)]">k</span></div>
+              </div>
+              <div>
+                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Lokalizacja</div>
+                <div className="text-[16px] mt-2">Warszawa</div>
+              </div>
+            </div>
+          </div>
+
+          <aside className="lg:col-span-5">
+            <div className="border hairline rounded-xl bg-[var(--bg-1)] p-6">
+              <div className="aspect-square w-full rounded-lg bg-gradient-to-br from-[var(--bg-2)] to-[var(--bg-3)] grid-dots flex items-center justify-center mb-5 border hairline relative overflow-hidden">
+                <div className="serif text-[160px] leading-none text-[var(--accent)]/30">JK</div>
+                <div className="absolute bottom-3 left-3 right-3 mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] flex justify-between">
+                  <span>portret · 2024</span>
+                  <span>{a.location}</span>
+                </div>
+              </div>
+              <div className="text-[14px] text-[var(--ink-dim)] leading-relaxed">{a.bio}</div>
+
+              <div className="mt-5 pt-5 border-t hairline space-y-2 text-[13px]">
+                <a href="#" className="flex items-center justify-between text-[var(--ink-dim)] hover:text-[var(--accent)] transition">
+                  <span>github.com/quantroad</span><span className="mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">kod</span>
+                </a>
+                <a href="#" className="flex items-center justify-between text-[var(--ink-dim)] hover:text-[var(--accent)] transition">
+                  <span>quantroad@mastodon.social</span><span className="mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">myśli</span>
+                </a>
+                <a href="mailto:hello@quantroad.pl" className="flex items-center justify-between text-[var(--ink-dim)] hover:text-[var(--accent)] transition">
+                  <span>hello@quantroad.pl</span><span className="mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">poczta</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-3 px-4 py-3 border hairline rounded-md bg-[var(--bg-1)]/50 flex items-start gap-3">
+              <div className="text-[var(--warn)] mono text-[14px] leading-none mt-0.5">!</div>
+              <div className="text-[11.5px] text-[var(--ink-mute)] leading-relaxed">
+                <span className="text-[var(--ink-dim)]">Treści edukacyjne, nie inwestycyjne.</span> Nie znam Twojej sytuacji finansowej,
+                horyzontu ani tolerancji ryzyka. Decyzje podejmujesz Ty — najlepiej po konsultacji z doradcą podatkowym.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* Principles */}
+      <section className="border-b hairline">
+        <div className="max-w-[1400px] mx-auto px-6 py-14">
+          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">zasady, których pilnuję</div>
+          <h2 className="serif text-[36px] tracking-[-0.01em] leading-tight mb-10">Cztery rzeczy, na które mnie złapiesz.</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--line)] border hairline rounded-xl overflow-hidden">
+            {[
+              { n:'01', t:'Po podatkach albo wcale', d:'Nie publikuję wyników brutto. Belka, IKE/IKZE, spread FX — wszystko liczone od pierwszej liczby.' },
+              { n:'02', t:'Kod jest jawny', d:'Każda strategia ma repozytorium na GitHubie. Możesz odpalić, zmienić parametry, znaleźć błąd. Cieszę się, gdy ktoś go znajduje.' },
+              { n:'03', t:'Zero sponsorów i prowizji', d:'Newsletter jest bezpłatny i pozostanie bezpłatny. Nie linkuję afiliacyjnie do brokerów. Utrzymuję się z innej pracy.' },
+              { n:'04', t:'Sceptycyzm wobec siebie', d:'Każdy artykuł kończy sekcją „kiedy ta strategia zawodzi". Jeśli nie umiem jej znaleźć, nie publikuję.' },
+            ].map(p => (
+              <div key={p.n} className="bg-[var(--bg-1)] p-7">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="display text-[32px] tnum text-[var(--accent)]">{p.n}</span>
+                  <h3 className="text-[18px] tracking-[-0.01em]">{p.t}</h3>
+                </div>
+                <p className="text-[13.5px] text-[var(--ink-dim)] leading-relaxed">{p.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <QRFooter/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<AboutPage />);
+</script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quant Road — propozycje logo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:        #0a0d12;
+    --bg-1:      #0f141b;
+    --bg-2:      #141a23;
+    --bg-3:      #1b232e;
+    --line:      #1f2630;
+    --line-2:    #2a3340;
+    --ink:       #e7ecf3;
+    --ink-dim:   #aab3c1;
+    --ink-mute:  #6b7585;
+    --ink-faint: #4a5260;
+    --accent:    #00e5a0;
+    --bg-light:  #f5f3ee;
+    --ink-light: #15171c;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; background: var(--bg); color: var(--ink); font-family:'Geist',ui-sans-serif,system-ui,sans-serif; -webkit-font-smoothing: antialiased; }
+  .mono{ font-family:'Geist Mono',ui-monospace,monospace; font-feature-settings:"tnum","zero"; }
+  .serif{ font-family:'Instrument Serif',serif; }
+
+  .wrap{ max-width: 1400px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  header.h{
+    display: flex; align-items: end; justify-content: space-between; gap: 24px;
+    border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 40px; flex-wrap: wrap;
+  }
+  header.h h1{ font-family:'Instrument Serif',serif; font-size: 56px; line-height: 1; letter-spacing: -0.02em; margin: 0; font-weight: 400; }
+  header.h h1 em{ color: var(--accent); font-style: italic; }
+  header.h .meta{ font-family:'Geist Mono',monospace; font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.16em; }
+
+  .grid{
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+  }
+  @media (min-width: 1100px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
+
+  .card{
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .card .head{
+    display: flex; justify-content: space-between; align-items: center; padding: 14px 18px;
+    border-bottom: 1px solid var(--line); background: var(--bg-1);
+  }
+  .card .head .num{ font-family:'Geist Mono',monospace; font-size: 11px; color: var(--ink-faint); letter-spacing: 0.16em; }
+  .card .head .name{ font-size: 13px; font-weight: 500; color: var(--ink); }
+  .card .stage{
+    padding: 56px 32px; min-height: 200px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .card .stage.dark{ background: var(--bg); }
+  .card .stage.light{ background: var(--bg-light); color: var(--ink-light); }
+  .card .stage.dotted{
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .card .foot{
+    padding: 14px 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between;
+    font-family:'Geist Mono',monospace; font-size: 10.5px; color: var(--ink-mute); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .card .desc{
+    padding: 14px 18px; font-size: 12px; color: var(--ink-dim); line-height: 1.55;
+    border-top: 1px dashed var(--line);
+  }
+  .row-mini{
+    display: flex; gap: 14px; align-items: center; padding: 18px;
+    border-top: 1px solid var(--line); background: var(--bg);
+  }
+  .row-mini .swatch{
+    width: 56px; height: 56px; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+  }
+  .row-mini .swatch.dark{ background: var(--bg); }
+  .row-mini .swatch.light{ background: var(--bg-light); }
+  .row-mini .swatch.accent{ background: var(--accent); }
+
+  .section-title{
+    font-family:'Geist Mono',monospace; font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.18em;
+    margin: 64px 0 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-title::after{ content:""; flex: 1; height: 1px; background: var(--line); }
+
+  /* ── Logo styles ── */
+
+  /* 01 — Wordmark serif "Quant Road" with em-dash road */
+  .logo-01 { display: inline-flex; align-items: baseline; gap: 14px; font-family:'Instrument Serif',serif; }
+  .logo-01 .q { font-size: 48px; letter-spacing: -0.02em; line-height: 0.9; }
+  .logo-01 .q em{ font-style: italic; color: var(--accent); }
+  .logo-01 .tag {
+    font-family:'Geist Mono',monospace; font-size: 10.5px; color: var(--ink-mute);
+    text-transform: uppercase; letter-spacing: 0.22em; padding-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-01 .tag::before{ content:""; width: 28px; height: 1px; background: currentColor; }
+
+  /* 02 — Mark "QR" with road perspective */
+  .logo-02 { display: inline-flex; align-items: center; gap: 14px; }
+  .logo-02 .mark{
+    width: 56px; height: 56px; border-radius: 12px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+  }
+  .logo-02 .mark::before{
+    content:""; position: absolute; inset: 0; background:
+      linear-gradient(180deg, transparent 0%, transparent 60%, rgba(0,0,0,.3) 100%);
+  }
+  .logo-02 .mark span{
+    font-family:'Geist',sans-serif; font-weight: 700; font-size: 22px; color: #04261b; letter-spacing: -0.02em;
+    z-index: 1; line-height: 1;
+  }
+  .logo-02 .mark .road{
+    position: absolute; bottom: 0; left: 50%; width: 80%; height: 38%;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(4,38,27,.45) 100%);
+    transform: translateX(-50%) perspective(40px) rotateX(35deg);
+    transform-origin: bottom;
+  }
+  .logo-02 .mark .lane{
+    position: absolute; bottom: 6px; left: 50%; width: 2px; height: 14px; background: #04261b;
+    transform: translateX(-50%);
+    box-shadow: 0 -22px 0 0 #04261b;
+  }
+  .logo-02 .word{ display: flex; flex-direction: column; }
+  .logo-02 .word .name{ font-family:'Instrument Serif',serif; font-size: 26px; line-height: 1; letter-spacing: -0.02em; }
+  .logo-02 .word .sub{ font-family:'Geist Mono',monospace; font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.2em; margin-top: 6px; }
+
+  /* 03 — Bracket / signal */
+  .logo-03 { display: inline-flex; align-items: center; gap: 16px; font-family:'Geist',sans-serif; }
+  .logo-03 .b { font-family:'Geist Mono',monospace; font-size: 36px; color: var(--accent); font-weight: 500; line-height: 1; }
+  .logo-03 .name{ font-family:'Geist',sans-serif; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1; }
+  .logo-03 .name .road{ color: var(--ink-mute); font-weight: 300; }
+
+  /* 04 — Compass / chart line */
+  .logo-04 { display: inline-flex; align-items: center; gap: 14px; }
+  .logo-04 svg{ display: block; }
+  .logo-04 .name{ font-family:'Instrument Serif',serif; font-size: 30px; line-height: 1; letter-spacing: -0.02em; }
+  .logo-04 .name em{ font-style: italic; }
+
+  /* 05 — Mono terminal */
+  .logo-05 { display: inline-flex; align-items: center; gap: 10px; font-family:'Geist Mono',monospace; font-size: 22px; }
+  .logo-05 .prompt { color: var(--accent); }
+  .logo-05 .word{ color: var(--ink); letter-spacing: -0.01em; }
+  .logo-05 .cur {
+    width: 12px; height: 22px; background: var(--accent); display: inline-block;
+    animation: blink 1.1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 06 — Stack: monogram QR with route arrow */
+  .logo-06 { display: inline-flex; align-items: center; gap: 16px; }
+  .logo-06 .mono-mark{
+    width: 64px; height: 64px; border: 1.5px solid var(--ink); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family:'Instrument Serif',serif; font-size: 28px; line-height: 1;
+    position: relative;
+  }
+  .logo-06 .mono-mark::after{
+    content:""; position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .logo-06 .word{ display: flex; flex-direction: column; }
+  .logo-06 .word .name{ font-family:'Instrument Serif',serif; font-size: 26px; line-height: 1; letter-spacing: -0.02em; }
+  .logo-06 .word .sub{ font-family:'Geist Mono',monospace; font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.2em; margin-top: 5px; }
+
+  /* light variants */
+  .light .logo-01 { color: var(--ink-light); }
+  .light .logo-01 .tag{ color: #6b7585; }
+  .light .logo-02 .word .name{ color: var(--ink-light); }
+  .light .logo-03 .name{ color: var(--ink-light); }
+  .light .logo-03 .name .road{ color: #6b7585; }
+  .light .logo-04 .name{ color: var(--ink-light); }
+  .light .logo-05 .word{ color: var(--ink-light); }
+  .light .logo-06 .word .name{ color: var(--ink-light); }
+  .light .logo-06 .mono-mark{ border-color: var(--ink-light); color: var(--ink-light); }
+  .light .logo-06 .word .sub{ color: #6b7585; }
+
+  /* App lockup preview */
+  .lockup{
+    display: flex; gap: 32px; flex-wrap: wrap; align-items: center; justify-content: center;
+    padding: 48px;
+    background: linear-gradient(180deg, var(--bg-1), var(--bg));
+    border: 1px solid var(--line); border-radius: 14px;
+  }
+  .lockup .browser{
+    width: 540px; max-width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  }
+  .lockup .browser .bar{
+    display: flex; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .lockup .browser .bar span{ width: 10px; height: 10px; border-radius: 50%; background: var(--bg-3); }
+  .lockup .browser .top{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; border-bottom: 1px solid var(--line);
+  }
+  .lockup .browser .top nav{
+    display: flex; gap: 16px; font-size: 11.5px; color: var(--ink-mute); font-family:'Geist Mono',monospace;
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .lockup .browser .top nav a{ color: var(--ink-mute); text-decoration: none; }
+  .lockup .browser .top nav a.on{ color: var(--ink); }
+  .lockup .browser .body{
+    padding: 32px 20px; min-height: 100px; display: flex; align-items: center; justify-content: center;
+    color: var(--ink-faint); font-family:'Geist Mono',monospace; font-size: 11px;
+  }
+
+  /* favicon strip */
+  .favs{ display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+  .fav{
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-1);
+    min-width: 120px;
+  }
+  .fav .ico{ width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .fav .lbl{ font-family:'Geist Mono',monospace; font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.14em; }
+
+  .fav-1{ background: var(--accent); color: #04261b; font-family:'Instrument Serif',serif; font-size: 26px; line-height: 1; }
+  .fav-2{ background: var(--bg); border: 1px solid var(--line-2); font-family:'Geist Mono',monospace; font-size: 18px; color: var(--accent); font-weight: 600; }
+  .fav-3{
+    background: var(--bg); border: 1px solid var(--line-2);
+    color: var(--accent); font-family:'Geist',sans-serif; font-weight: 700; font-size: 22px;
+    position: relative;
+  }
+  .fav-4{ background: var(--ink); color: var(--bg); font-family:'Instrument Serif',serif; font-size: 26px; line-height: 1; font-style: italic; }
+
+  /* recommended box */
+  .recommended{
+    background: linear-gradient(180deg, rgba(0,229,160,.06), transparent);
+    border: 1px solid rgba(0,229,160,.35);
+  }
+  .recommended .head{ background: rgba(0,229,160,.06); }
+  .recommended .head .num{ color: var(--accent); }
+  .badge-rec{
+    font-family:'Geist Mono',monospace; font-size: 9.5px; color: var(--accent);
+    background: rgba(0,229,160,.12); padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.16em;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="h">
+    <div>
+      <div class="mono" style="color: var(--accent); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 12px;">propozycje logo · 6 kierunków</div>
+      <h1>Logo dla <em>Quant Road</em></h1>
+      <p style="color: var(--ink-mute); font-size: 14px; margin-top: 14px; max-width: 60ch; line-height: 1.55;">
+        Sześć propozycji w spójnym języku wizualnym istniejącej strony — Geist + Instrument Serif + akcent #00e5a0. Każdy w wariancie dark i light, plus podgląd w nawigacji i jako favicon.
+      </p>
+    </div>
+    <div class="meta">v1 · maj 2026</div>
+  </header>
+
+  <div class="section-title">01 — Główne propozycje</div>
+
+  <div class="grid">
+
+    <!-- 01 -->
+    <div class="card recommended">
+      <div class="head">
+        <span class="num">01 / SERIF · WORDMARK</span>
+        <span class="badge-rec">Rekomendowane</span>
+      </div>
+      <div class="stage dark dotted">
+        <div class="logo-01">
+          <span class="q">Quant <em>Road</em></span>
+          <span class="tag">est. 2026</span>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-01">
+          <span class="q">Quant <em>Road</em></span>
+          <span class="tag">est. 2026</span>
+        </div>
+      </div>
+      <div class="desc">
+        Wordmark na bazie Instrument Serif. „Road" w italic w kolorze akcentu — ten sam ruch typograficzny co w hero strony. Em-dash + tagline jako sygnatura redakcyjna. Najbliższe DNA istniejącej strony.
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="card">
+      <div class="head">
+        <span class="num">02 / MARK · QR + ROAD</span>
+        <span class="name">Sygnet QR z drogą</span>
+      </div>
+      <div class="stage dark">
+        <div class="logo-02">
+          <div class="mark">
+            <span>QR</span>
+            <div class="road"></div>
+            <div class="lane"></div>
+          </div>
+          <div class="word"><span class="name">Quant Road</span><span class="sub">research · backtests</span></div>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-02">
+          <div class="mark">
+            <span>QR</span>
+            <div class="road"></div>
+            <div class="lane"></div>
+          </div>
+          <div class="word"><span class="name">Quant Road</span><span class="sub">research · backtests</span></div>
+        </div>
+      </div>
+      <div class="desc">
+        Sygnet z monogramem QR i metaforą drogi w perspektywie. Łatwo użyć osobno (favicon, app icon) lub w lockupie z wordmarkiem. Bardziej „brand'owy" charakter.
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="card">
+      <div class="head">
+        <span class="num">03 / TECHNICAL · BRACKETS</span>
+        <span class="name">Sygnał i nawiasy</span>
+      </div>
+      <div class="stage dark dotted">
+        <div class="logo-03">
+          <span class="b">{ ⤴ }</span>
+          <span class="name">Quant <span class="road">Road</span></span>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-03">
+          <span class="b" style="color: var(--ink-light);">{ ⤴ }</span>
+          <span class="name">Quant <span class="road">Road</span></span>
+        </div>
+      </div>
+      <div class="desc">
+        Wariant techniczny: nawiasy z monospace + glif ↗ jako sygnał trendu. Czyta się jak fragment kodu. Najlepiej działa, gdy chcesz mocno podkreślić warstwę researchowo-quantową.
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="card">
+      <div class="head">
+        <span class="num">04 / CHART · ROUTE</span>
+        <span class="name">Krzywa jako droga</span>
+      </div>
+      <div class="stage dark">
+        <div class="logo-04">
+          <svg width="64" height="56" viewBox="0 0 64 56" fill="none">
+            <circle cx="6" cy="50" r="3" fill="var(--ink)"/>
+            <path d="M6 50 Q 24 50, 28 36 T 44 18 L 58 6" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <circle cx="58" cy="6" r="4" fill="var(--accent)"/>
+            <path d="M6 53 H 58" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="2 4"/>
+          </svg>
+          <span class="name">Quant <em style="font-style: italic;">Road</em></span>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-04">
+          <svg width="64" height="56" viewBox="0 0 64 56" fill="none">
+            <circle cx="6" cy="50" r="3" fill="var(--ink-light)"/>
+            <path d="M6 50 Q 24 50, 28 36 T 44 18 L 58 6" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <circle cx="58" cy="6" r="4" fill="var(--accent)"/>
+            <path d="M6 53 H 58" stroke="#aab3c1" stroke-width="1" stroke-dasharray="2 4"/>
+          </svg>
+          <span class="name" style="color: var(--ink-light);">Quant <em style="font-style: italic;">Road</em></span>
+        </div>
+      </div>
+      <div class="desc">
+        Equity curve potraktowana dosłownie jako droga z punktu A do B. Najbardziej dosłowna metafora — „kwantyfikacja drogi do celu finansowego". Dobry kierunek, jeśli chcesz brand bardziej narracyjny niż techniczny.
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="card">
+      <div class="head">
+        <span class="num">05 / TERMINAL · COMMAND</span>
+        <span class="name">Wariant terminalowy</span>
+      </div>
+      <div class="stage dark">
+        <div class="logo-05">
+          <span class="prompt">$</span><span class="word">quant-road</span><span class="cur"></span>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-05">
+          <span class="prompt">$</span><span class="word">quant-road</span><span class="cur"></span>
+        </div>
+      </div>
+      <div class="desc">
+        Geist Mono jako wordmark. Prompt `$` + nazwa w kebab-case + migający kursor. Bardzo „dev/quant" w klimacie. Świetny w stopkach, social-headerach, jako alternatywne CTA.
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="card">
+      <div class="head">
+        <span class="num">06 / MONOGRAM · CIRCLE</span>
+        <span class="name">Klasyczny monogram</span>
+      </div>
+      <div class="stage dark">
+        <div class="logo-06">
+          <div class="mono-mark"><em style="font-style: italic;">QR</em></div>
+          <div class="word"><span class="name">Quant Road</span><span class="sub">finance · simulated</span></div>
+        </div>
+      </div>
+      <div class="stage light">
+        <div class="logo-06">
+          <div class="mono-mark"><em style="font-style: italic;">QR</em></div>
+          <div class="word"><span class="name">Quant Road</span><span class="sub">finance · simulated</span></div>
+        </div>
+      </div>
+      <div class="desc">
+        Najbardziej „redakcyjny" wariant. Monogram QR w italic w kółku z zielonym puncto-akcentem. Stylistyka jak nagłówki gazet researchowych (Bridgewater Daily, GMO).
+      </div>
+    </div>
+
+  </div>
+
+  <!-- App lockup -->
+  <div class="section-title">02 — Logo w nawigacji</div>
+
+  <div class="lockup">
+    <div class="browser">
+      <div class="bar"><span></span><span></span><span></span></div>
+      <div class="top">
+        <div class="logo-01" style="font-size: inherit;">
+          <span class="q" style="font-size: 22px;">Quant <em>Road</em></span>
+        </div>
+        <nav>
+          <a href="#" class="on">Strategie</a>
+          <a href="#">Artykuły</a>
+          <a href="#">O mnie</a>
+        </nav>
+      </div>
+      <div class="body">— rekomendacja —</div>
+    </div>
+
+    <div class="browser">
+      <div class="bar"><span></span><span></span><span></span></div>
+      <div class="top">
+        <div class="logo-02" style="gap: 10px;">
+          <div class="mark" style="width: 32px; height: 32px; border-radius: 7px;">
+            <span style="font-size: 13px;">QR</span>
+            <div class="road"></div>
+            <div class="lane" style="height: 8px; bottom: 4px; box-shadow: 0 -12px 0 0 #04261b;"></div>
+          </div>
+          <span style="font-family:'Instrument Serif',serif; font-size: 18px;">Quant Road</span>
+        </div>
+        <nav>
+          <a href="#" class="on">Strategie</a>
+          <a href="#">Artykuły</a>
+          <a href="#">O mnie</a>
+        </nav>
+      </div>
+      <div class="body">— wariant z sygnetem —</div>
+    </div>
+  </div>
+
+  <!-- Favicons -->
+  <div class="section-title">03 — Favicony i app icony</div>
+
+  <div class="favs">
+    <div class="fav">
+      <div class="ico fav-1"><em style="font-style: italic;">Q</em></div>
+      <div class="lbl">01 · serif Q</div>
+    </div>
+    <div class="fav">
+      <div class="ico fav-2">QR</div>
+      <div class="lbl">02 · mono QR</div>
+    </div>
+    <div class="fav">
+      <div class="ico fav-3">↗</div>
+      <div class="lbl">03 · arrow</div>
+    </div>
+    <div class="fav">
+      <div class="ico fav-4"><em style="font-style: italic;">QR</em></div>
+      <div class="lbl">06 · monogram</div>
+    </div>
+  </div>
+
+  <p style="color: var(--ink-faint); font-size: 12px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-family:'Geist Mono',monospace; letter-spacing: 0.08em; text-transform: uppercase;">
+    Wybierz numer (np. „01" albo „02") — wpiszę go do nawigacji we wszystkich stronach.
+  </p>
+
+</div>
+</body>
+</html>

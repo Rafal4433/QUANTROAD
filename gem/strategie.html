@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Strategie · Quant Road</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="qr.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="components/icons.jsx"></script>
+<script type="text/babel" src="components/QRData.jsx"></script>
+<script type="text/babel" src="components/QRLayout.jsx"></script>
+<script type="text/babel">
+function MiniSparkRandom({ seed = 1, color = 'var(--accent)' }){
+  let s = seed;
+  const rand = () => { s = (s*9301+49297)%233280; return s/233280; };
+  const w = 240, h = 36;
+  const pts = [];
+  let v = 0.4;
+  for (let i = 0; i < 32; i++){
+    v += (rand() - 0.45) * 0.08;
+    v = Math.max(0.05, Math.min(0.95, v));
+    pts.push(v);
+  }
+  const path = pts.map((p, i) => `${i?'L':'M'}${(i/(pts.length-1)*w).toFixed(1)},${(p*h).toFixed(1)}`).join(' ');
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="w-full h-full">
+      <path d={path} stroke={color} strokeWidth="1.4" fill="none" vectorEffect="non-scaling-stroke"/>
+    </svg>
+  );
+}
+
+function StrategiesPage(){
+  const [sort, setSort] = React.useState('cagr');
+  const sorted = [...QRData.strategies].sort((a, b) => {
+    if (sort === 'cagr')   return b.cagr - a.cagr;
+    if (sort === 'dd')     return b.dd - a.dd; // less negative is better
+    if (sort === 'sharpe') return b.sharpe - a.sharpe;
+    if (sort === 'since')  return a.since - b.since;
+    return 0;
+  });
+
+  return (
+    <>
+      <QRTopNav active="strategies"/>
+
+      <section className="border-b hairline">
+        <div className="max-w-[1400px] mx-auto px-6 pt-14 pb-10">
+          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">katalog · {QRData.strategies.length} strategii</div>
+          <h1 className="serif text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.02em]">
+            Strategie, które <span className="italic text-[var(--accent)]">faktycznie</span><br/>liczę co tydzień.
+          </h1>
+          <p className="text-[15px] text-[var(--ink-dim)] mt-5 max-w-[60ch] leading-relaxed">
+            Każda ma kod backtestu, sygnał aktualny na ostatni piątek i historyczną krzywą kapitału. Wyniki po podatkach, w PLN.
+          </p>
+        </div>
+      </section>
+
+      <section className="max-w-[1400px] mx-auto px-6 py-10">
+        {/* sort bar */}
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <span className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">sortuj wg</span>
+          <div className="seg">
+            {[['cagr','CAGR'],['dd','Drawdown'],['sharpe','Sharpe'],['since','Wiek']].map(([k,l]) => (
+              <button key={k} className={sort===k?'on':''} onClick={() => setSort(k)}>{l}</button>
+            ))}
+          </div>
+          <div className="ml-auto mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">
+            wszystko po podatkach · PLN · 15 lat
+          </div>
+        </div>
+
+        {/* table-card list */}
+        <div className="border hairline rounded-xl bg-[var(--bg-1)] overflow-hidden">
+          {/* head */}
+          <div className="hidden md:grid grid-cols-[1.6fr_2fr_180px_90px_90px_90px] gap-4 px-5 py-3 border-b hairline text-[10px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">
+            <div>strategia</div>
+            <div>opis</div>
+            <div>krzywa</div>
+            <div className="text-right">CAGR</div>
+            <div className="text-right">Max DD</div>
+            <div className="text-right">Sharpe</div>
+          </div>
+
+          {sorted.map((s, i) => (
+            <a key={s.id} href={s.id === 'gem' ? 'gem.html' : '#'}
+               className="grid grid-cols-1 md:grid-cols-[1.6fr_2fr_180px_90px_90px_90px] gap-4 px-5 py-5 items-center border-b hairline last:border-b-0 hover:bg-[var(--bg-2)]/40 transition group">
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className={`badge ${s.status === 'live' ? 'badge-buy' : 'badge-pay'}`}>{s.status}</div>
+                  <span className="mono text-[10.5px] text-[var(--ink-faint)] tnum">od {s.since}</span>
+                </div>
+                <div className="text-[15px] tracking-[-0.01em] group-hover:text-[var(--accent)] transition">{s.name}</div>
+                <div className="mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.12em] mt-1">{s.complexity} złożoność</div>
+              </div>
+
+              <div>
+                <p className="text-[12.5px] text-[var(--ink-dim)] leading-relaxed">{s.lede}</p>
+                <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+                  {s.assets.map(a => (
+                    <span key={a} className="mono text-[10.5px] px-1.5 py-0.5 rounded bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">{a}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="h-9">
+                <MiniSparkRandom seed={(i+1)*97} color={s.cagr > 9 ? 'var(--accent)' : 'var(--blue)'}/>
+              </div>
+
+              <div className="mono text-right tnum">
+                <div className="text-[16px] text-[var(--accent)]">{s.cagr.toFixed(1)}%</div>
+                <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">CAGR</div>
+              </div>
+              <div className="mono text-right tnum">
+                <div className="text-[16px] text-[var(--ink)]">{s.dd.toFixed(1)}%</div>
+                <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">Max DD</div>
+              </div>
+              <div className="mono text-right tnum">
+                <div className="text-[16px] text-[var(--ink)]">{s.sharpe.toFixed(2)}</div>
+                <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">Sharpe</div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div className="mt-6 mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em] flex items-center gap-3 flex-wrap">
+          <span>dane: stooq · yahoo · ecb</span><span>·</span>
+          <span>obliczono lokalnie</span><span>·</span>
+          <span>kod: github.com/quantroad/strategies</span>
+        </div>
+      </section>
+
+      <QRFooter/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<StrategiesPage />);
+</script>
+</body>
+</html>
