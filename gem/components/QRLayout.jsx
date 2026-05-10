@@ -147,46 +147,151 @@ function QRContactModal({ onClose }) {
   );
 }
 
+/* ── Newsletter Modal ──────────────────────────────────────── */
+function QRNewsletterModal({ onClose }) {
+  const [email, setEmail] = React.useState('');
+  const [status, setStatus] = React.useState('idle'); // idle | sending | ok | err
+  const [errMsg, setErrMsg] = React.useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus('ok');
+      } else {
+        setErrMsg(data.error || 'Coś poszło nie tak.');
+        setStatus('err');
+      }
+    } catch {
+      setErrMsg('Brak połączenia. Spróbuj ponownie.');
+      setStatus('err');
+    }
+  }
+
+  function handleBackdrop(e) {
+    if (e.target === e.currentTarget) onClose();
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+      onClick={handleBackdrop}
+    >
+      <div
+        className="w-full max-w-md rounded-xl border hairline bg-[var(--bg-1)] shadow-2xl p-6 relative"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <div className="text-[15px] font-semibold">Newsletter</div>
+            <div className="mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mt-0.5">raz na 2 tygodnie · bezpłatnie</div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded flex items-center justify-center text-[var(--ink-mute)] hover:text-[var(--ink)] hover:bg-[var(--bg-2)] transition"
+            aria-label="Zamknij"
+          >✕</button>
+        </div>
+
+        {status === 'ok' ? (
+          <div className="py-8 text-center">
+            <div className="text-[var(--accent)] text-[28px] mb-3">✓</div>
+            <div className="text-[14px] font-medium">Zapisano!</div>
+            <div className="text-[13px] text-[var(--ink-mute)] mt-1">Sprawdź skrzynkę — możliwe że trafiło do spamu.</div>
+            <button
+              onClick={onClose}
+              className="mt-5 px-4 py-2 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition"
+            >Zamknij</button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <p className="text-[13px] text-[var(--ink-mute)] leading-relaxed">
+              Backtesty, błędy, surowy research. Bez clickbaitu, bez „sygnałów premium".
+            </p>
+            <div>
+              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">E-mail</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                placeholder="ty@example.com"
+                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
+              />
+            </div>
+            {status === 'err' && (
+              <div className="text-[12px] text-red-400">{errMsg}</div>
+            )}
+            <button
+              type="submit"
+              disabled={status === 'sending'}
+              className="w-full py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {status === 'sending' ? 'Zapisuję…' : 'Zapisz się'}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── Top Nav ───────────────────────────────────────────────── */
 function QRTopNav({ active = 'home' }) {
+  const [newsletterOpen, setNewsletterOpen] = React.useState(false);
+
   return (
-    <header className="border-b hairline glass sticky top-0 z-30">
-      <div className="max-w-[1400px] mx-auto h-14 px-6 flex items-center justify-between">
-        <a href="index.html" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
-            <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
-          </div>
-          <div className="leading-tight">
-            <div className="text-[14px] font-medium tracking-[-0.01em]">kwantowo.pl</div>
-          </div>
-        </a>
-
-        <nav className="hidden md:flex items-center gap-1">
-          {NAV.map(item => (
-            <a key={item.id}
-               href={item.href}
-               className={`px-3 py-1.5 rounded text-[13px] transition ${
-                 active === item.id
-                   ? 'text-[var(--ink)] bg-[var(--bg-2)]'
-                   : 'text-[var(--ink-mute)] hover:text-[var(--ink)]'
-               }`}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--bg-2)] border hairline mono text-[11px] text-[var(--ink-mute)]">
-            {window.Ic && <Ic.Search width="11" height="11"/>}
-            <span>szukaj artykułu</span>
-            <span className="ml-3 px-1 py-0.5 rounded bg-[var(--bg-3)] text-[9.5px] text-[var(--ink-faint)]">⌘K</span>
-          </div>
-          <a href="#newsletter" className="hidden sm:inline-block px-3 py-1.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[12.5px] font-semibold hover:brightness-110 transition">
-            Newsletter
+    <>
+      {newsletterOpen && <QRNewsletterModal onClose={() => setNewsletterOpen(false)} />}
+      <header className="border-b hairline glass sticky top-0 z-30">
+        <div className="max-w-[1400px] mx-auto h-14 px-6 flex items-center justify-between">
+          <a href="index.html" className="flex items-center gap-2.5 group">
+            <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
+              <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
+            </div>
+            <div className="leading-tight">
+              <div className="text-[14px] font-medium tracking-[-0.01em]">kwantowo.pl</div>
+            </div>
           </a>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {NAV.map(item => (
+              <a key={item.id}
+                 href={item.href}
+                 className={`px-3 py-1.5 rounded text-[13px] transition ${
+                   active === item.id
+                     ? 'text-[var(--ink)] bg-[var(--bg-2)]'
+                     : 'text-[var(--ink-mute)] hover:text-[var(--ink)]'
+                 }`}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--bg-2)] border hairline mono text-[11px] text-[var(--ink-mute)]">
+              {window.Ic && <Ic.Search width="11" height="11"/>}
+              <span>szukaj artykułu</span>
+              <span className="ml-3 px-1 py-0.5 rounded bg-[var(--bg-3)] text-[9.5px] text-[var(--ink-faint)]">⌘K</span>
+            </div>
+            <button
+              onClick={() => setNewsletterOpen(true)}
+              className="hidden sm:inline-block px-3 py-1.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[12.5px] font-semibold hover:brightness-110 transition"
+            >
+              Newsletter
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 
