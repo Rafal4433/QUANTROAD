@@ -230,5 +230,13 @@ function HomePage(){
 
 ReactDOM.createRoot(document.getElementById('root')).render(<HomePage />);
 </script>
+
+<!-- Netlify Forms: hidden static form for crawler detection -->
+<form name="kontakt" data-netlify="true" hidden>
+  <input type="text"  name="imie_nazwisko" />
+  <input type="email" name="email" />
+  <input type="tel"   name="telefon" />
+  <textarea           name="wiadomosc"></textarea>
+</form>
 </body>
 </html>
