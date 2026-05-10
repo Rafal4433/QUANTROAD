@@ -3,7 +3,9 @@
 function RebalancingLog({ log = [] }) {
   const [filter, setFilter] = React.useState('ALL');
 
-  const filtered = filter === 'ALL' ? log : log.filter(r => r.kind === filter);
+  const filtered = (filter === 'ALL' ? log : log.filter(r => r.kind === filter))
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   function fmtDate(iso){
     const d = new Date(iso);

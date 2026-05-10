@@ -14,6 +14,7 @@ const DEFAULT_PARAMS = {
   ikeActive:       false,
   ensembleMomentum: true,
   startDate:       '2000-01-01',
+  endDate:         '',
 };
 
 function GEMSimulator() {
@@ -49,7 +50,11 @@ function GEMSimulator() {
   const result = React.useMemo(() => {
     if (!historicalData || !window.runBacktest) return null;
     try {
-      return window.runBacktest({ ...params, historicalData });
+      const endFilter = params.endDate || '9999-12';
+      const filteredData = params.endDate
+        ? historicalData.filter(d => d.date <= endFilter)
+        : historicalData;
+      return window.runBacktest({ ...params, historicalData: filteredData });
     } catch (e) {
       console.error('Backtest error:', e);
       return null;
@@ -59,19 +64,17 @@ function GEMSimulator() {
   // Transformacja wyniku do formatu sub-komponentów
   const chartData = React.useMemo(() => {
     if (!result) return null;
-    const p0 = result.portfolioValues[0] || 1;
-    const b0 = result.benchmarkValues[0] || 1;
-
     const equity = result.labels.map((label, i) => {
       const d = new Date(label + '-01');
       return {
         date: d,
         label: d.toLocaleDateString('pl-PL', { year: 'numeric', month: 'short' }),
         year: d.getFullYear(),
-        gem:  result.portfolioValues[i] / p0 * 100,
-        msci: result.benchmarkValues[i] / b0 * 100,
-        gemDd:  result.drawdownSeries[i],
-        msciDd: result.benchDrawdownSeries[i],
+        gem:      result.portfolioValues[i],
+        msci:     result.benchmarkValues[i],
+        invested: params.initialCapital + params.monthlyDCA * i,
+        gemDd:    result.drawdownSeries[i],
+        msciDd:   result.benchDrawdownSeries[i],
       };
     });
 
@@ -189,7 +192,7 @@ function GEMSimulator() {
             {chartData ? (
               <>
                 {/* KPI ROW */}
-                <KPIRow kpis={chartData.kpis} finalNet={chartData.costs.gem.net} equityData={chartData.equity} benchLabel={benchLabel}/>
+                <KPIRow kpis={chartData.kpis} finalNet={chartData.costs.gem.net} equityData={chartData.equity} benchLabel={benchLabel} ikeActive={params.ikeActive}/>
 
                 {/* CHART */}
                 <EquityCurveChart
@@ -218,8 +221,8 @@ function GEMSimulator() {
                   </div>
                   <div className="h-[420px]">
                     {tab === 'log'      && <RebalancingLog log={chartData.log} />}
-                    {tab === 'cost'     && <CostBreakdown costs={chartData.costs} benchLabel={benchLabel} />}
-                    {tab === 'momentum' && <MomentumHeatmap />}
+                    {tab === 'cost'     && <CostBreakdown costs={chartData.costs} benchLabel={benchLabel} ikeActive={params.ikeActive} />}
+                    {tab === 'momentum' && <MomentumHeatmap params={params} historicalData={historicalData} />}
                   </div>
                 </div>
               </>
@@ -261,47 +264,153 @@ function GEMSimulator() {
   );
 }
 
-function MomentumHeatmap() {
-  const assets  = ['VTSMX','QQQ','VGTSX','VEIEX','EPOL','GLD','BTC','SHY','TLT'];
-  const periods = ['1M','3M','6M','12M','SKŁAD'];
-  const matrix  = [
-    [ 4.2,  8.1, 14.7, 18.4, 11.4],
-    [ 5.6, 10.8, 16.2, 22.1, 13.7],
-    [ 2.4,  4.1,  7.2,  9.0,  5.7],
-    [ 6.7,  9.4,  8.9,  7.8,  8.2],
-    [-1.2, -0.4,  3.1,  6.5,  2.0],
-    [ 1.6,  3.4,  5.7,  9.1,  4.9],
-    [12.4, 38.1, 92.7,142.0, 71.3],
-    [ 0.4,  1.1,  2.0,  4.1,  1.9],
-    [-2.1, -3.4, -1.2,  0.6, -1.5],
-  ];
-  function cell(v) {
-    const x = Math.max(-30, Math.min(30, v));
-    const t = Math.abs(x) / 30;
-    return v >= 0
-      ? `oklch(0.45 0.15 165 / ${0.15 + t * 0.6})`
-      : `oklch(0.45 0.15 20 / ${0.15 + t * 0.6})`;
+const ASSET_META = {
+  usa:   { ticker: 'VTSMX', sub: 'US Total Mkt' },
+  nq:    { ticker: 'QQQ',   sub: 'Nasdaq 100' },
+  exus:  { ticker: 'VGTSX', sub: 'Intl ex-US' },
+  em:    { ticker: 'VEIEX', sub: 'Emerging Mkts' },
+  epol:  { ticker: 'EPOL',  sub: 'Polska MSCI' },
+  gld:   { ticker: 'GLD',   sub: 'Złoto' },
+  btc:   { ticker: 'BTC',   sub: 'Bitcoin' },
+  bonds: { ticker: 'VBMFX', sub: 'Bonds Total' },
+  tlt:   { ticker: 'TLT',   sub: 'T-bond 20Y+' },
+  shy:   { ticker: 'SHY',   sub: 'T-bill 1–3Y' },
+};
+const DYNAMIC_SAFE = ['tlt', 'shy', 'bonds'];
+
+function MomentumHeatmap({ params, historicalData }) {
+  if (!historicalData || historicalData.length === 0) {
+    return <div className="flex items-center justify-center h-full mono text-[12px] text-[var(--ink-faint)]">Ładowanie danych…</div>;
   }
+
+  // build asset list: selected risk assets + safe asset(s)
+  const riskIds = params.riskAssets || [];
+  const safeIds = params.safeAsset === 'dynamic' ? DYNAMIC_SAFE : (params.safeAsset && params.safeAsset !== 'cash' ? [params.safeAsset] : []);
+  const assetIds = [...riskIds, ...safeIds.filter(s => !riskIds.includes(s))];
+
+  // price arrays keyed by asset id (last element = most recent)
+  const priceOf = {};
+  assetIds.forEach(id => {
+    priceOf[id] = historicalData.map(d => (d[id] !== undefined && d[id] !== null) ? d[id] : null);
+  });
+
+  function roc(prices, lookback) {
+    const n = prices.length - 1;
+    const start = n - lookback;
+    if (start < 0 || prices[start] === null || prices[n] === null) return null;
+    return (prices[n] / prices[start] - 1) * 100;
+  }
+
+  const PERIODS = [
+    { label: '1M',   lb: 1 },
+    { label: '3M',   lb: 3 },
+    { label: '6M',   lb: 6 },
+    { label: '12M',  lb: 12 },
+    { label: 'SKŁAD', lb: null }, // ensemble avg(3,6,12)
+  ];
+
+  const lastDate = historicalData[historicalData.length - 1]?.date;
+
+  const rows = assetIds.map(id => {
+    const prices = priceOf[id];
+    const r1  = roc(prices, 1);
+    const r3  = roc(prices, 3);
+    const r6  = roc(prices, 6);
+    const r12 = roc(prices, 12);
+    const ensemble = (r3 !== null && r6 !== null && r12 !== null) ? (r3 + r6 + r12) / 3 : null;
+    const vals = [r1, r3, r6, r12, ensemble];
+    const isRisk = riskIds.includes(id);
+    return { id, vals, isRisk };
+  });
+
+  // for color scale: max abs value across all cells (capped for saturation)
+  const allVals = rows.flatMap(r => r.vals).filter(v => v !== null);
+  const absMax = Math.max(10, Math.min(60, Math.max(...allVals.map(Math.abs))));
+
+  function cellBg(v) {
+    if (v === null) return 'transparent';
+    const t = Math.min(1, Math.abs(v) / absMax);
+    return v >= 0
+      ? `oklch(0.45 0.15 165 / ${0.12 + t * 0.65})`
+      : `oklch(0.45 0.15 20  / ${0.12 + t * 0.65})`;
+  }
+
+  // find winner (highest ensemble among risk assets)
+  const riskRows = rows.filter(r => r.isRisk);
+  const winnerIdx = riskRows.length > 0
+    ? riskRows.reduce((best, r, i) => {
+        const v = r.vals[4]; // ensemble col
+        const bv = riskRows[best].vals[4];
+        return (v !== null && (bv === null || v > bv)) ? i : best;
+      }, 0)
+    : -1;
+  const winnerId = riskRows[winnerIdx]?.id;
+
   return (
     <div className="p-5 overflow-auto h-full">
-      <div className="grid gap-1" style={{ gridTemplateColumns: '78px repeat(5, 1fr)' }}>
-        <div></div>
-        {periods.map(p => <div key={p} className="mono text-[10.5px] uppercase tracking-wider text-[var(--ink-mute)] text-center pb-2">{p}</div>)}
-        {assets.map((a, ai) => (
-          <React.Fragment key={a}>
-            <div className="mono text-[12px] text-[var(--ink-dim)] flex items-center font-semibold tracking-wide">{a}</div>
-            {matrix[ai].map((v, pi) => (
-              <div key={pi} className="rounded-md py-2 px-2 border hairline flex items-center justify-between" style={{ background: cell(v) }}>
-                <span className="mono text-[10.5px] text-[var(--ink-faint)]">{periods[pi]}</span>
-                <span className={`mono text-[12px] tnum ${v >= 0 ? 'text-[var(--ink)]' : 'text-[var(--bad)]'}`}>
-                  {v >= 0 ? '+' : ''}{v.toFixed(1)}%
-                </span>
-              </div>
-            ))}
-          </React.Fragment>
+      <div className="grid gap-1" style={{ gridTemplateColumns: '90px repeat(5, 1fr)' }}>
+        {/* header */}
+        <div className="mono text-[9.5px] uppercase tracking-wider text-[var(--ink-faint)] pb-2 flex items-end">
+          {lastDate ? lastDate.slice(0,7) : ''}
+        </div>
+        {PERIODS.map(p => (
+          <div key={p.label} className="mono text-[10.5px] uppercase tracking-wider text-[var(--ink-mute)] text-center pb-2">{p.label}</div>
         ))}
+
+        {/* divider row: ryzykowne */}
+        <div className="col-span-6 mono text-[9px] uppercase tracking-[.18em] text-[var(--ink-faint)] py-1 border-t hairline">
+          ryzykowne
+        </div>
+
+        {rows.filter(r => r.isRisk).map(r => {
+          const meta = ASSET_META[r.id] || { ticker: r.id.toUpperCase(), sub: '' };
+          const isWinner = r.id === winnerId;
+          return (
+            <React.Fragment key={r.id}>
+              <div className={`flex flex-col justify-center py-1 ${isWinner ? 'text-[var(--accent)]' : 'text-[var(--ink-dim)]'}`}>
+                <span className="mono text-[12px] font-semibold tracking-wide leading-none">{meta.ticker}</span>
+                <span className="mono text-[9.5px] text-[var(--ink-faint)] leading-tight mt-0.5">{meta.sub}</span>
+                {isWinner && <span className="mono text-[8.5px] text-[var(--accent)] uppercase tracking-wider mt-0.5">▲ sygnał</span>}
+              </div>
+              {r.vals.map((v, pi) => (
+                <div key={pi} className="rounded-md py-2 px-2 border hairline flex items-center justify-end" style={{ background: cellBg(v) }}>
+                  <span className={`mono text-[12px] tnum ${v === null ? 'text-[var(--ink-faint)]' : v >= 0 ? 'text-[var(--ink)]' : 'text-[var(--bad)]'}`}>
+                    {v === null ? '—' : `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`}
+                  </span>
+                </div>
+              ))}
+            </React.Fragment>
+          );
+        })}
+
+        {/* divider row: bezpieczne */}
+        {rows.some(r => !r.isRisk) && (
+          <div className="col-span-6 mono text-[9px] uppercase tracking-[.18em] text-[var(--ink-faint)] py-1 border-t hairline mt-1">
+            bezpieczne
+          </div>
+        )}
+        {rows.filter(r => !r.isRisk).map(r => {
+          const meta = ASSET_META[r.id] || { ticker: r.id.toUpperCase(), sub: '' };
+          return (
+            <React.Fragment key={r.id}>
+              <div className="flex flex-col justify-center py-1 text-[var(--ink-dim)]">
+                <span className="mono text-[12px] font-semibold tracking-wide leading-none">{meta.ticker}</span>
+                <span className="mono text-[9.5px] text-[var(--ink-faint)] leading-tight mt-0.5">{meta.sub}</span>
+              </div>
+              {r.vals.map((v, pi) => (
+                <div key={pi} className="rounded-md py-2 px-2 border hairline flex items-center justify-end" style={{ background: cellBg(v) }}>
+                  <span className={`mono text-[12px] tnum ${v === null ? 'text-[var(--ink-faint)]' : v >= 0 ? 'text-[var(--ink)]' : 'text-[var(--bad)]'}`}>
+                    {v === null ? '—' : `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`}
+                  </span>
+                </div>
+              ))}
+            </React.Fragment>
+          );
+        })}
       </div>
-      <div className="mt-4 mono text-[10.5px] text-[var(--ink-faint)]">SKŁAD = śr. ważona · dane ilustracyjne</div>
+      <div className="mt-4 mono text-[10.5px] text-[var(--ink-faint)]">
+        SKŁAD = śr. (3M + 6M + 12M) · dane na: {lastDate ? lastDate.slice(0,7) : '—'} · obliczono lokalnie
+      </div>
     </div>
   );
 }

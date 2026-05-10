@@ -143,6 +143,38 @@ function SimulatorControls({ params, setParams }) {
           </div>
         </Section>
 
+        {/* Zakres analizy */}
+        <div className="px-5 py-4 border-b hairline">
+          <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] mb-3">Zakres analizy</div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
+              <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">od</span>
+              <input
+                type="number" min="1998" max="2024"
+                value={parseInt(p.startDate) || 2000}
+                onChange={e => {
+                  const y = Math.max(1998, Math.min(2024, +e.target.value || 2000));
+                  upd('startDate', `${y}-01-01`);
+                }}
+                className="bg-transparent outline-none w-full mono text-[13px] tnum text-[var(--ink)]"
+              />
+            </div>
+            <span className="mono text-[11px] text-[var(--ink-faint)]">—</span>
+            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
+              <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">do</span>
+              <input
+                type="number" min="1999" max="2025"
+                value={p.endDate ? parseInt(p.endDate) : 2025}
+                onChange={e => {
+                  const y = Math.max(1999, Math.min(2025, +e.target.value || 2025));
+                  upd('endDate', y === 2025 ? '' : `${y}-12-31`);
+                }}
+                className="bg-transparent outline-none w-full mono text-[13px] tnum text-[var(--ink)]"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Krok 2 — Trend i benchmark */}
         <Section step="2" title="Trend i punkt odniesienia" hint="sygnał">
           <div className="space-y-4">
@@ -154,12 +186,12 @@ function SimulatorControls({ params, setParams }) {
               </div>
             </div>
 
-            <div className="bg-[var(--bg-2)] border hairline rounded-md px-3 py-2.5 flex items-center justify-between">
-              <div>
-                <div className="text-[12px] text-[var(--ink)]">Algorytm trendu</div>
-                <div className="text-[10.5px] text-[var(--ink-mute)] mono mt-0.5">
-                  {p.ensembleMomentum ? 'Ensemble · 3M · 6M · 12M' : `Prosty · ${p.lookback}M ROC`}
-                </div>
+            <div className="bg-[var(--bg-2)] border hairline rounded-md px-3 py-2.5 flex items-center justify-between gap-3">
+              <div className="flex items-baseline gap-2 min-w-0">
+                <span className="text-[12px] text-[var(--ink)] shrink-0">Algorytm trendu</span>
+                <span className="text-[10px] text-[var(--ink-faint)] mono truncate">
+                  {p.ensembleMomentum ? 'ensemble · 3M · 6M · 12M' : `prosty · ${p.lookback}M ROC`}
+                </span>
               </div>
               <Toggle on={p.ensembleMomentum} onChange={v => upd('ensembleMomentum', v)} label="" />
             </div>

@@ -25,7 +25,7 @@ function Row({ label, gem, bench, kind = 'cost', highlight }) {
   );
 }
 
-function CostBreakdown({ costs, benchLabel = 'Benchmark' }) {
+function CostBreakdown({ costs, benchLabel = 'Benchmark', ikeActive = false }) {
   const c = costs || { gem: { brokerFees: 0, taxesPaid: 0, gross: 0, finalTax: 0, net: 0, grossReturn: 0, netReturn: 0 }, bench: { brokerFees: 0, taxesPaid: 0, gross: 0, finalTax: 0, net: 0, grossReturn: 0, netReturn: 0 } };
 
   return (
@@ -59,11 +59,13 @@ function CostBreakdown({ costs, benchLabel = 'Benchmark' }) {
         <Row label="Zwrot netto" gem={c.gem.netReturn} bench={c.bench.netReturn} kind="pct" highlight />
       </div>
 
-      {/* footer note */}
-      <div className="px-5 py-3 border-t hairline mono text-[10.5px] text-[var(--ink-faint)] flex items-center gap-2">
-        <Ic.Shield width="11" height="11" className="text-[var(--ink-mute)]"/>
-        Tarcza IKE/IKZE oszczędza <span className="text-[var(--accent)] tnum">{(c.gem.taxesPaid + c.gem.finalTax).toLocaleString('pl-PL')} PLN</span> podatku w 15-letnim oknie.
-      </div>
+      {/* footer note — tylko gdy IKE/IKZE włączone */}
+      {ikeActive && (
+        <div className="px-5 py-3 border-t hairline mono text-[10.5px] text-[var(--ink-faint)] flex items-center gap-2">
+          <Ic.Shield width="11" height="11" className="text-[var(--ink-mute)]"/>
+          Tarcza IKE/IKZE oszczędza <span className="text-[var(--accent)] tnum">{(c.gem.taxesPaid + c.gem.finalTax).toLocaleString('pl-PL')} PLN</span> podatku w 15-letnim oknie.
+        </div>
+      )}
     </div>
   );
 }
