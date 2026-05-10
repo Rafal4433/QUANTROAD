@@ -15,7 +15,7 @@ function QRTopNav({ active = 'home' }) {
             <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
           </div>
           <div className="leading-tight">
-            <div className="text-[14px] font-medium tracking-[-0.01em]">Quant Road</div>
+            <div className="text-[14px] font-medium tracking-[-0.01em]">kwantowo.pl</div>
             <div className="mono text-[9.5px] uppercase tracking-[.18em] text-[var(--ink-faint)] -mt-0.5">finanse · dane · kod</div>
           </div>
         </a>
@@ -58,7 +58,7 @@ function QRFooter() {
             <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
               <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
             </div>
-            <span className="text-[15px] font-medium">Quant Road</span>
+            <span className="text-[15px] font-medium">kwantowo.pl</span>
           </div>
           <p className="text-[13px] text-[var(--ink-mute)] mt-3 leading-relaxed max-w-[44ch]">
             Niezależny blog o ilościowym podejściu do inwestowania. Strategie, narzędzia,
@@ -82,13 +82,13 @@ function QRFooter() {
             <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="#">RSS</a></li>
             <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="#">Mastodon</a></li>
             <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="#">GitHub</a></li>
-            <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="mailto:hello@quantroad.pl">e-mail</a></li>
+            <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="mailto:hello@kwantowo.pl">e-mail</a></li>
           </ul>
         </div>
       </div>
       <div className="border-t hairline">
         <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3 mono text-[10.5px] uppercase tracking-[.14em] text-[var(--ink-faint)]">
-          <div>© 2025 Quant Road · prywatny blog edukacyjny</div>
+          <div>© 2025 kwantowo.pl · prywatny blog edukacyjny</div>
           <div className="flex items-center gap-3">
             <span>nie stanowi porady inwestycyjnej</span>
             <span>·</span>

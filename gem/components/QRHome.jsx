@@ -1,4 +1,4 @@
-// Quant Road homepage — hero manifest + featured + posts grid
+// kwantowo.pl homepage — hero manifest + featured + posts grid
 
 function PostCard({ post, large }) {
   const tagColor = { accent:'var(--accent)', blue:'var(--blue)', warn:'var(--warn)' }[post.color] || 'var(--accent)';
@@ -52,7 +52,7 @@ function QRHome() {
             finansowe.
           </h1>
           <p className="text-[16px] md:text-[18px] text-[var(--ink-dim)] mt-8 max-w-[60ch] leading-relaxed">
-            Quant Road to mój notatnik z drogi przez ilościowe inwestowanie.
+            kwantowo.pl to mój notatnik z drogi przez ilościowe inwestowanie.
             Strategie testowane na danych, kalkulowane realnie — z polskim podatkiem Belki, IKE/IKZE i spreadem FX.
             Bez magii, bez sygnałów premium.
           </p>

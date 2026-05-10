@@ -1,4 +1,4 @@
-// Mock content for the Quant Road site (articles, strategies, author).
+// Mock content for the kwantowo.pl site (articles, strategies, author).
 
 (function(){
   const articles = [
@@ -63,7 +63,7 @@
 
   const author = {
     name: 'Jakub Kowalski',
-    handle: '@quantroad',
+    handle: '@kwantowo',
     bio: 'Były quant w funduszu hedgingowym, teraz prywatny inwestor. Buduję narzędzia i piszę o tym, co naprawdę działa po podatkach.',
     location: 'Warszawa, PL',
     since: 2019,
