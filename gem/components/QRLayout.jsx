@@ -158,7 +158,6 @@ function QRTopNav({ active = 'home' }) {
           </div>
           <div className="leading-tight">
             <div className="text-[14px] font-medium tracking-[-0.01em]">kwantowo.pl</div>
-            <div className="mono text-[9.5px] uppercase tracking-[.18em] text-[var(--ink-faint)] -mt-0.5">finanse · dane · kod</div>
           </div>
         </a>
 

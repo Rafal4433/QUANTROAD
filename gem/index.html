@@ -32,9 +32,10 @@ function StatBlock({ label, value, suffix, sub }){
 }
 
 function HomePage(){
-  const featured = QRData.articles.find(a => a.featured);
-  const recent = QRData.articles.filter(a => !a.featured).slice(0, 4);
+  const latest = QRData.articles[0];
+  const recent = QRData.articles.slice(1, 5);
   const top3 = QRData.strategies.slice(0, 3);
+  const lastDigest = QRData.digests[0];
 
   return (
     <>
@@ -45,25 +46,16 @@ function HomePage(){
         <div className="absolute inset-0 grid-dots opacity-50 pointer-events-none"></div>
         <div className="relative max-w-[1400px] mx-auto px-6 pt-16 lg:pt-24 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8">
-            <div className="flex items-center gap-2 text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">
-              <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
-              quant road · est. 2019
-              <span>·</span>
-              <span>{QRData.author.posts} artykułów</span>
-              <span>·</span>
-              <span>{QRData.newsletter.subscribers.toLocaleString('pl-PL')} czytelników</span>
-            </div>
-
             <h1 className="serif text-[56px] md:text-[88px] leading-[0.95] tracking-[-0.02em]">
-              Inwestowanie<br/>
-              jak <span className="italic text-[var(--accent)]">spreadsheet</span>,<br/>
-              nie jak <span className="italic text-[var(--ink-mute)]">poker.</span>
+              Moje notatki<br/>
+              z inwestowania.<br/>
+              <span className="text-[0.65em] text-[var(--ink-mute)]">Dane, reguły, <span className="italic text-[var(--accent)]">wnioski.</span></span>
             </h1>
 
             <p className="text-[16px] md:text-[18px] text-[var(--ink-dim)] mt-7 max-w-[60ch] leading-relaxed">
-              Niezależny blog o ilościowym podejściu do rynków. Strategie momentum,
-              alokacja taktyczna, podatki i koszty — wszystko liczone od kuchni, na realnych
-              danych, dla polskiego inwestora.
+              Piszę o tym, jak inwestować mądrze. Strategie oparte na danych, polskie podatki
+              i koszty od kuchni. Konkretne liczby dla każdego, kto odkłada pieniądze
+              i chce wiedzieć, co z nimi robić.
             </p>
 
             <div className="mt-8 flex items-center gap-3 flex-wrap">
@@ -80,12 +72,12 @@ function HomePage(){
           </div>
 
           <div className="lg:col-span-4 lg:pl-6 lg:border-l hairline">
-            <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">na blogu</div>
+            <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">o blogu</div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-7">
-              <StatBlock label="Strategie live" value="6" sub="śledzonych co miesiąc" />
-              <StatBlock label="Lat backtestu" value="25" sub="2000 → 2025" />
-              <StatBlock label="Średni CAGR top-3" value="11.6" suffix="%" sub="po podatkach" />
-              <StatBlock label="Czytelnicy" value="3.8" suffix="k" sub="newsletter tygodniowy" />
+              <StatBlock label="Strategie" value="6" sub="śledzonych w symulatorze" />
+              <StatBlock label="Lat danych" value="25" sub="2000 do 2025" />
+              <StatBlock label="Artykuły" value={QRData.articles.length} sub="i kolejne w drodze" />
+              <StatBlock label="Dostęp" value="100" suffix="%" sub="bezpłatnie, bez paywall" />
             </div>
           </div>
         </div>
@@ -95,7 +87,7 @@ function HomePage(){
       <section className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">artykuł tygodnia</div>
+            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatni artykuł</div>
             <a href="#" className="block group">
               <div className="aspect-[16/10] rounded-xl border hairline bg-gradient-to-br from-[var(--bg-2)] to-[var(--bg-1)] relative overflow-hidden mb-6">
                 <div className="absolute inset-0 grid-dots opacity-50"></div>
@@ -105,18 +97,18 @@ function HomePage(){
                   <path d="M0,40 L8,42 L16,44 L24,40 L32,46 L40,42 L48,48 L56,44 L64,50 L72,46 L80,52 L88,48 L100,54"
                         stroke="var(--blue)" strokeWidth="0.3" fill="none" opacity="0.6" vectorEffect="non-scaling-stroke"/>
                 </svg>
-                <div className="absolute top-4 left-4 badge badge-buy">{featured.cat}</div>
+                <div className="absolute top-4 left-4 badge badge-buy">{latest.cat}</div>
               </div>
               <div className="flex items-center gap-3 text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">
-                <span>{fmtDate(featured.date)}</span><span>·</span>
-                <span>{featured.readMin} min czytania</span>
+                <span>{fmtDate(latest.date)}</span><span>·</span>
+                <span>{latest.readMin} min czytania</span>
               </div>
               <h2 className="serif text-[36px] md:text-[44px] leading-[1.05] tracking-[-0.01em] group-hover:text-[var(--accent)] transition">
-                {featured.title}
+                {latest.title}
               </h2>
-              <p className="text-[14.5px] text-[var(--ink-dim)] mt-4 max-w-[60ch] leading-relaxed">{featured.lede}</p>
+              <p className="text-[14.5px] text-[var(--ink-dim)] mt-4 max-w-[60ch] leading-relaxed">{latest.lede}</p>
               <div className="mt-5 flex items-center gap-2">
-                {featured.tags.map(t => (
+                {latest.tags.map(t => (
                   <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
                 ))}
               </div>
@@ -157,7 +149,7 @@ function HomePage(){
               <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-2">strategie</div>
               <h2 className="serif text-[36px] tracking-[-0.01em] leading-tight">Co właściwie tu liczę.</h2>
               <p className="text-[13.5px] text-[var(--ink-mute)] mt-2 max-w-[56ch] leading-relaxed">
-                Każda strategia ma własny zestaw danych, kod backtestu i powtarzalny sygnał. Nic na słowo — wszystko sprawdzalne.
+                Każda strategia ma własny zestaw danych, kod backtestu i powtarzalny sygnał.
               </p>
             </div>
             <a href="strategie.html" className="text-[13px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--accent)] transition">
@@ -194,11 +186,54 @@ function HomePage(){
         </div>
       </section>
 
+      {/* DIGEST */}
+      {lastDigest && (
+      <section className="border-b hairline">
+        <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-7">
+            <div className="flex items-center gap-2 text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">
+              <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+              digest · {fmtDate(lastDigest.date)}
+            </div>
+            <h2 className="serif text-[34px] tracking-[-0.01em] leading-tight">Co się działo w tym tygodniu.</h2>
+            {lastDigest.note && (
+              <p className="text-[14px] text-[var(--ink-dim)] mt-4 leading-relaxed">{lastDigest.note}</p>
+            )}
+            <div className="mt-6 space-y-2">
+              {lastDigest.articles.map((title, i) => (
+                <a key={i} href="#" className="flex items-start gap-2 group">
+                  <span className="mono text-[10px] text-[var(--accent)] mt-[5px]">→</span>
+                  <span className="text-[14.5px] group-hover:text-[var(--accent)] transition leading-snug">{title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <aside className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
+            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">sygnały strategii</div>
+            <ul className="space-y-3">
+              {lastDigest.signals.map((s, i) => (
+                <li key={i} className="flex items-center justify-between py-2.5 border-b hairline last:border-0">
+                  <span className="text-[13px] text-[var(--ink-mute)]">{s.strat}</span>
+                  <span className={`mono text-[12px] px-2 py-0.5 rounded ${s.change ? 'badge badge-pay' : 'text-[var(--ink)] bg-[var(--bg-2)] border hairline'}`}>{s.asset}</span>
+                </li>
+              ))}
+            </ul>
+            {lastDigest.chart && (
+              <div className="mt-6 pt-5 border-t hairline">
+                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-2">wykres tygodnia</div>
+                <div className="text-[13px] text-[var(--ink-dim)]">{lastDigest.chart}</div>
+              </div>
+            )}
+          </aside>
+        </div>
+      </section>
+      )}
+
       {/* NEWSLETTER */}
       <section id="newsletter" className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">newsletter · piątek 8:00</div>
+            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">newsletter</div>
             <h2 className="serif text-[44px] tracking-[-0.02em] leading-tight">
               Jeden e-mail. <span className="italic text-[var(--accent)]">Zero szumu.</span>
             </h2>
@@ -217,7 +252,7 @@ function HomePage(){
               </button>
             </div>
             <div className="mt-3 mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">
-              {QRData.newsletter.subscribers.toLocaleString('pl-PL')} osób · archiwum {QRData.newsletter.archive} numerów · można wypisać jednym klikiem
+              bezpłatnie · można wypisać jednym klikiem
             </div>
           </form>
         </div>

@@ -79,5 +79,23 @@
     archive: 67,
   };
 
-  window.QRData = { articles, strategies, author, newsletter };
+  // Tygodniowe digi — aktualizowane co piątek
+  const digests = [
+    {
+      id: 'w39-2025',
+      date: '2025-09-26',
+      articles: [
+        'GEM na rynku polskim — czy momentum przeżyje koszty Belki?',
+      ],
+      signals: [
+        { strat: 'GEM', asset: 'US Equity (VTSMX)', change: false },
+        { strat: 'Dual Mom + Bonds', asset: 'US Equity (VTSMX)', change: false },
+        { strat: 'Permanent Portfolio', asset: 'hold — brak sygnału', change: false },
+      ],
+      chart: 'GEM vs S&P 500 — krzywa kapitału YTD 2025',
+      note: null,
+    },
+  ];
+
+  window.QRData = { articles, strategies, author, newsletter, digests };
 })();
