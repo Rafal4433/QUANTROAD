@@ -80,7 +80,7 @@ function ArticlesPage(){
         <ul className="divide-y hairline border-y hairline">
           {filtered.map(a => (
             <li key={a.id}>
-              <a href="#" className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr_auto] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
+              <a href={a.href || '#'} className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr_auto] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
                 <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] flex md:flex-col gap-3 md:gap-1">
                   <span className="text-[var(--accent)]">{a.cat}</span>
                   <span>{fmtDate(a.date)}</span>

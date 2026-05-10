@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharpe Ratio w praktyce · kwantowo.pl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="qr.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+</head>
+<body class="min-h-screen">
+<div id="root"></div>
+<script type="text/babel" src="components/icons.jsx"></script>
+<script type="text/babel" src="components/QRData.jsx"></script>
+<script type="text/babel" src="components/QRLayout.jsx"></script>
+<script type="text/babel">
+const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = Recharts;
+
+/* ── Dane przykładowe ──────────────────────────────────────── */
+
+// Miesięczne stopy zwrotu: portfel A (momentum), portfel B (buy&hold), gotówka
+const MONTHLY = [
+  { m:'sty 24', a:3.2,  b:1.8,  rf:0.4 },
+  { m:'lut 24', a:-1.4, b:-2.1, rf:0.4 },
+  { m:'mar 24', a:4.1,  b:3.2,  rf:0.4 },
+  { m:'kwi 24', a:-0.8, b:0.5,  rf:0.4 },
+  { m:'maj 24', a:2.7,  b:2.0,  rf:0.4 },
+  { m:'cze 24', a:1.9,  b:1.5,  rf:0.4 },
+  { m:'lip 24', a:-2.3, b:-1.0, rf:0.4 },
+  { m:'sie 24', a:5.1,  b:3.8,  rf:0.4 },
+  { m:'wrz 24', a:1.2,  b:0.9,  rf:0.4 },
+  { m:'paź 24', a:-1.1, b:-0.7, rf:0.4 },
+  { m:'lis 24', a:3.8,  b:2.6,  rf:0.4 },
+  { m:'gru 24', a:2.2,  b:1.7,  rf:0.4 },
+];
+
+function calcSharpe(returns, rf) {
+  const excess = returns.map(r => r - rf);
+  const mean = excess.reduce((s, r) => s + r, 0) / excess.length;
+  const variance = excess.reduce((s, r) => s + Math.pow(r - mean, 2), 0) / excess.length;
+  const std = Math.sqrt(variance);
+  return std === 0 ? 0 : (mean / std) * Math.sqrt(12); // annualizacja
+}
+
+const returnsA = MONTHLY.map(d => d.a);
+const returnsB = MONTHLY.map(d => d.b);
+const rf = MONTHLY[0].rf;
+const sharpeA = calcSharpe(returnsA, rf).toFixed(2);
+const sharpeB = calcSharpe(returnsB, rf).toFixed(2);
+
+// Krzywa kapitału
+let cumA = 100, cumB = 100;
+const EQUITY = MONTHLY.map(d => {
+  cumA = cumA * (1 + d.a / 100);
+  cumB = cumB * (1 + d.b / 100);
+  return { m: d.m, a: +cumA.toFixed(2), b: +cumB.toFixed(2) };
+});
+
+/* ── Komponenty ────────────────────────────────────────────── */
+
+function Formula({ children }) {
+  return (
+    <div className="my-6 overflow-x-auto">
+      <div className="inline-block px-6 py-4 rounded-lg border hairline bg-[var(--bg-2)] mono text-[15px] text-[var(--ink)]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Callout({ type = 'info', children }) {
+  const styles = {
+    info:    'border-[var(--accent)]   bg-[var(--accent)]/8   text-[var(--ink-dim)]',
+    warn:    'border-yellow-500/60     bg-yellow-500/8        text-[var(--ink-dim)]',
+    danger:  'border-red-500/60        bg-red-500/8           text-[var(--ink-dim)]',
+  };
+  const icons = { info: '→', warn: '⚠', danger: '✕' };
+  return (
+    <div className={`my-5 border-l-2 pl-4 py-3 pr-4 rounded-r-md text-[13.5px] leading-relaxed ${styles[type]}`}>
+      <span className="mr-2 opacity-70">{icons[type]}</span>{children}
+    </div>
+  );
+}
+
+function KpiCard({ label, value, sub, accent }) {
+  return (
+    <div className="rounded-lg border hairline bg-[var(--bg-2)] p-4 text-center">
+      <div className="mono text-[10px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">{label}</div>
+      <div className={`display text-[36px] tnum ${accent ? 'text-[var(--accent)]' : ''}`}>{value}</div>
+      {sub && <div className="mono text-[10.5px] text-[var(--ink-faint)] mt-1">{sub}</div>}
+    </div>
+  );
+}
+
+function SharpeScaleBar() {
+  const bands = [
+    { range:'< 0',        label:'ujemny',    color:'#ef4444' },
+    { range:'0 – 0.5',   label:'słaby',     color:'#f97316' },
+    { range:'0.5 – 1.0', label:'przeciętny',color:'#eab308' },
+    { range:'1.0 – 2.0', label:'dobry',     color:'#22c55e' },
+    { range:'> 2.0',     label:'wybitny',   color:'#10b981' },
+  ];
+  return (
+    <div className="my-6">
+      <div className="flex rounded-lg overflow-hidden border hairline">
+        {bands.map(b => (
+          <div key={b.range} className="flex-1 py-3 px-2 text-center" style={{ background: b.color + '22' }}>
+            <div className="mono text-[10px] font-semibold" style={{ color: b.color }}>{b.range}</div>
+            <div className="text-[11px] text-[var(--ink-mute)] mt-0.5">{b.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReturnsBarChart() {
+  const barData = MONTHLY.map(d => ({
+    m: d.m,
+    'Portfel A': d.a,
+    'Portfel B': d.b,
+  }));
+
+  // Custom bar — prosty SVG zamiast Recharts (kompatybilność z UMD)
+  const max = Math.max(...MONTHLY.map(d => Math.max(Math.abs(d.a), Math.abs(d.b))));
+  const H = 120, W_BAR = 14, GAP = 4, PAD = 24;
+  const totalW = MONTHLY.length * (2 * W_BAR + GAP + 8) + PAD * 2;
+
+  return (
+    <div className="overflow-x-auto">
+      <svg width={totalW} height={H + 40} style={{ minWidth: '100%' }}>
+        {/* zero line */}
+        <line x1={PAD} y1={H/2 + 10} x2={totalW - PAD} y2={H/2 + 10} stroke="var(--ink-faint)" strokeWidth="1"/>
+        {MONTHLY.map((d, i) => {
+          const x = PAD + i * (2 * W_BAR + GAP + 8);
+          const scaleA = (Math.abs(d.a) / max) * (H / 2 - 6);
+          const scaleB = (Math.abs(d.b) / max) * (H / 2 - 6);
+          const yA = d.a >= 0 ? H/2 + 10 - scaleA : H/2 + 10;
+          const yB = d.b >= 0 ? H/2 + 10 - scaleB : H/2 + 10;
+          return (
+            <g key={d.m}>
+              <rect x={x} y={yA} width={W_BAR} height={scaleA} fill={d.a >= 0 ? 'var(--accent)' : '#ef4444'} opacity="0.85" rx="2"/>
+              <rect x={x + W_BAR + 3} y={yB} width={W_BAR} height={scaleB} fill={d.b >= 0 ? '#60a5fa' : '#f87171'} opacity="0.7" rx="2"/>
+              <text x={x + W_BAR} y={H + 26} textAnchor="middle" fontSize="9" fill="var(--ink-faint)">{d.m.slice(0,3)}</text>
+            </g>
+          );
+        })}
+        {/* legenda */}
+        <rect x={PAD} y={H + 32} width={8} height={8} fill="var(--accent)" rx="1"/>
+        <text x={PAD + 11} y={H + 40} fontSize="10" fill="var(--ink-mute)">Portfel A (momentum)</text>
+        <rect x={PAD + 120} y={H + 32} width={8} height={8} fill="#60a5fa" rx="1"/>
+        <text x={PAD + 133} y={H + 40} fontSize="10" fill="var(--ink-mute)">Portfel B (buy&amp;hold)</text>
+      </svg>
+    </div>
+  );
+}
+
+function EquityCurveChart() {
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <LineChart data={EQUITY} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--ink-faint)" opacity={0.3}/>
+        <XAxis dataKey="m" tick={{ fontSize: 10, fill: 'var(--ink-faint)' }} />
+        <YAxis tick={{ fontSize: 10, fill: 'var(--ink-faint)' }} />
+        <Tooltip
+          contentStyle={{ background: 'var(--bg-2)', border: '1px solid var(--ink-faint)', borderRadius: 6, fontSize: 12 }}
+          formatter={(v, n) => [`${v.toFixed(1)}`, n]}
+        />
+        <Legend wrapperStyle={{ fontSize: 11 }}/>
+        <Line type="monotone" dataKey="a" name="Portfel A" stroke="var(--accent)" strokeWidth={2} dot={false}/>
+        <Line type="monotone" dataKey="b" name="Portfel B" stroke="#60a5fa" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+
+/* ── Main page ─────────────────────────────────────────────── */
+
+function ArticlePage() {
+  return (
+    <>
+      <QRTopNav active="articles"/>
+
+      {/* Hero */}
+      <section className="border-b hairline">
+        <div className="max-w-[780px] mx-auto px-6 pt-14 pb-10">
+          <div className="flex items-center gap-3 mono text-[10.5px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-5">
+            <span className="px-2 py-0.5 rounded bg-[var(--bg-2)] border hairline text-[var(--accent)]">Metryki</span>
+            <span>·</span>
+            <span>1 paź 2025</span>
+            <span>·</span>
+            <span>8 min czytania</span>
+          </div>
+
+          <h1 className="serif text-[42px] md:text-[56px] leading-[1.05] tracking-[-0.02em]">
+            Sharpe Ratio<br/>w praktyce
+          </h1>
+          <p className="text-[16px] md:text-[18px] text-[var(--ink-dim)] mt-5 leading-relaxed max-w-[60ch]">
+            Co mówi, czego nie mówi i jak go liczyć — z przykładami na prawdziwych danych.
+          </p>
+
+          <div className="mt-6 flex gap-2 flex-wrap">
+            {['ryzyko','metryki','sharpe'].map(t => (
+              <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Body */}
+      <article className="max-w-[780px] mx-auto px-6 py-12 prose-article">
+
+        {/* ── 1. Co to jest ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-10 mb-4">Co to jest Sharpe Ratio?</h2>
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-4">
+          Sharpe Ratio to miara efektywności portfela — ile jednostek zwrotu ponad stopę wolną od ryzyka
+          zarabiasz na każdą jednostkę ryzyka (mierzonego odchyleniem standardowym). Opracował go
+          William Sharpe w 1966 roku. Do dziś jest domyślnym wskaźnikiem w każdym raporcie funduszu.
+        </p>
+
+        <Formula>
+          SR = ( R<sub>p</sub> − R<sub>f</sub> ) / σ<sub>p</sub>
+        </Formula>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-6 text-[13px]">
+          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">R<sub>p</sub></div>
+            <div className="text-[var(--ink)]">Średni zwrot portfela (roczny lub miesięczny)</div>
+          </div>
+          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">R<sub>f</sub></div>
+            <div className="text-[var(--ink)]">Stopa wolna od ryzyka (np. WIBOR 1M, bony skarbowe)</div>
+          </div>
+          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">σ<sub>p</sub></div>
+            <div className="text-[var(--ink)]">Odchylenie standardowe zwrotów portfela</div>
+          </div>
+        </div>
+
+        <Callout type="info">
+          Wynik <strong>nie zależy od skali zwrotów</strong> — portfel z 5% zwrotem i 2% odch. std.
+          ma ten sam Sharpe co portfel z 20% zwrotem i 8% odch. std. (oba ≈ 2.5).
+          To właśnie jest użyteczne: możesz porównać strategie o różnej skali.
+        </Callout>
+
+        {/* ── 2. Skala ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">Jak interpretować wartość?</h2>
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-2">
+          Nie ma jednej "dobrej" wartości — kontekst rynku ma znaczenie. Ale praktyczne progi wyglądają tak:
+        </p>
+        <SharpeScaleBar/>
+        <p className="text-[13px] text-[var(--ink-faint)] leading-relaxed">
+          Większość aktywnych funduszy akcyjnych mieści się w przedziale 0.3–0.8.
+          Sharpe powyżej 1.5 to rzadkość — na dłuższych horyzontach prawie nie istnieje bez dźwigni lub survivorship bias.
+        </p>
+
+        {/* ── 3. Przykład ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">Przykład na danych</h2>
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-5">
+          Dwa hipotetyczne portfele, 12 miesięcy 2024. Stopa wolna od ryzyka: 0.4% miesięcznie (~4.8% rocznie).
+          Miesięczne zwroty poniżej:
+        </p>
+
+        <ReturnsBarChart/>
+
+        <div className="grid grid-cols-2 gap-4 my-8">
+          <KpiCard label="Sharpe — Portfel A" value={sharpeA} sub="momentum, wyższa zmienność" accent/>
+          <KpiCard label="Sharpe — Portfel B" value={sharpeB} sub="buy&hold, niższa zmienność"/>
+        </div>
+
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-4">
+          Krzywa kapitału obu portfeli — portfel A ma wyższe szczyty, ale i głębsze korekty.
+          Wyższy Sharpe oznacza, że dodatkowe ryzyko jest lepiej wynagradzane.
+        </p>
+
+        <div className="rounded-xl border hairline bg-[var(--bg-2)] p-4 mb-6">
+          <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">Krzywa kapitału (baza = 100)</div>
+          <EquityCurveChart/>
+        </div>
+
+        {/* ── 4. Annualizacja ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">Annualizacja — ważny detal</h2>
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-4">
+          Sharpe liczymy zazwyczaj na miesięcznych zwrotach, ale podajemy go w skali rocznej.
+          Przeliczenie wymaga pomnożenia przez pierwiastek z liczby okresów w roku:
+        </p>
+
+        <Formula>
+          SR<sub>roczny</sub> = SR<sub>miesięczny</sub> × √12
+        </Formula>
+
+        <Callout type="warn">
+          Częsty błąd: annualizacja przez √252 (dni sesyjne) przy miesięcznych danych.
+          Używaj √12 dla miesięcznych zwrotów, √52 dla tygodniowych, √252 dla dziennych.
+        </Callout>
+
+        {/* ── 5. Ograniczenia ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">Ograniczenia, o których mało kto mówi</h2>
+
+        <div className="space-y-3 my-5">
+          {[
+            {
+              title: 'Karantuje symetrię ryzyka',
+              body: 'Odchylenie standardowe traktuje wzrosty i spadki jednakowo. Portfel z dużymi górkami i małymi dołkami dostaje niski Sharpe — mimo że inwestorowi odpowiada tylko kierunek w dół.'
+            },
+            {
+              title: 'Wrażliwy na rozkład zwrotów',
+              body: 'Zakłada rozkład normalny. Strategie z "grubymi ogonami" (np. sprzedaż opcji) mogą mieć sztucznie wysoki Sharpe, bo volatility wygląda nisko — aż do dnia kryzysu.'
+            },
+            {
+              title: 'Zależy od horyzontu',
+              body: 'Sharpe obliczony na 3 latach może wyglądać zupełnie inaczej niż na 10 latach tej samej strategii. Nie porównuj wskaźników z różnych okien czasowych.'
+            },
+            {
+              title: 'Manipulowalny przez częstotliwość próbkowania',
+              body: 'Wygładzanie zwrotów (np. miesięczne zamiast dziennych) sztucznie obniża odch. std. i zawyża Sharpe. Fundusze private equity korzystają z tego efektu.'
+            },
+          ].map(item => (
+            <div key={item.title} className="rounded-md border hairline bg-[var(--bg-2)] p-4">
+              <div className="text-[13.5px] font-semibold mb-1">{item.title}</div>
+              <div className="text-[13px] text-[var(--ink-mute)] leading-relaxed">{item.body}</div>
+            </div>
+          ))}
+        </div>
+
+        <Callout type="danger">
+          Sharpe Ratio sam w sobie nie wystarczy do oceny strategii. Zawsze patrz razem
+          na <strong>max drawdown</strong>, <strong>Calmar Ratio</strong> i <strong>Ulcer Index</strong>.
+        </Callout>
+
+        {/* ── 6. Praktyka ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">Jak liczyć samemu?</h2>
+        <p className="text-[15px] text-[var(--ink-dim)] leading-relaxed mb-4">
+          Potrzebujesz szeregu miesięcznych zwrotów i założenia o stopie wolnej od ryzyka.
+          W polskich warunkach rozsądne przybliżenie to oprocentowanie 3-miesięcznych bonów skarbowych
+          lub WIBOR 1M.
+        </p>
+
+        <div className="rounded-lg border hairline bg-[var(--bg-3)] p-4 my-5 overflow-x-auto">
+          <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">pseudokod / JS</div>
+          <pre className="mono text-[12.5px] text-[var(--ink-dim)] leading-relaxed whitespace-pre">{`function sharpe(monthlyReturns, monthlyRf) {
+  const excess = monthlyReturns.map(r => r - monthlyRf);
+  const mean   = excess.reduce((s, r) => s + r, 0) / excess.length;
+  const std    = Math.sqrt(
+    excess.reduce((s, r) => s + (r - mean) ** 2, 0) / excess.length
+  );
+  return (mean / std) * Math.sqrt(12); // annualizacja
+}`}</pre>
+        </div>
+
+        {/* ── 7. Podsumowanie ── */}
+        <h2 className="serif text-[28px] tracking-[-0.01em] mt-12 mb-4">TL;DR</h2>
+        <ul className="space-y-2 text-[14px] text-[var(--ink-dim)] leading-relaxed list-none pl-0">
+          {[
+            'Sharpe Ratio = (zwrot ponad RF) / odchylenie std — wyższy to lepiej.',
+            'Annualizuj przez √12 przy danych miesięcznych.',
+            'SR > 1.0 to dobry wynik, > 2.0 to rzadkość.',
+            'Nie nadaje się do porównań między klasami aktywów z różnym profilem ryzyka.',
+            'Używaj razem z max drawdown — sam Sharpe nie opowiada całej historii.',
+          ].map((item, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="mono text-[var(--accent)] shrink-0 mt-0.5">{String(i+1).padStart(2,'0')}.</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* nav do artykułów */}
+        <div className="mt-16 pt-8 border-t hairline flex items-center justify-between">
+          <a href="artykuly.html" className="mono text-[11px] uppercase tracking-[.15em] text-[var(--ink-mute)] hover:text-[var(--ink)] transition">
+            ← Wszystkie artykuły
+          </a>
+          <div className="flex gap-2">
+            {['ryzyko','metryki','sharpe'].map(t => (
+              <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
+            ))}
+          </div>
+        </div>
+      </article>
+
+      <QRFooter/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ArticlePage />);
+</script>
+
+<!-- Netlify Forms -->
+<form name="kontakt" data-netlify="true" hidden>
+  <input type="text"  name="imie_nazwisko" />
+  <input type="email" name="email" />
+  <input type="tel"   name="telefon" />
+  <textarea           name="wiadomosc"></textarea>
+</form>
+</body>
+</html>

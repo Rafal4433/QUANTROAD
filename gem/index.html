@@ -59,8 +59,8 @@ function HomePage(){
             </p>
 
             <div className="mt-8 flex items-center gap-3 flex-wrap">
-              <a href="gem.html" className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13.5px] font-semibold hover:brightness-110 transition">
-                Otwórz symulator GEM →
+              <a href="strategie.html" className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13.5px] font-semibold hover:brightness-110 transition">
+                Katalog strategii →
               </a>
               <a href="artykuly.html" className="px-4 py-2.5 rounded-md bg-[var(--bg-2)] border hairline text-[13.5px] text-[var(--ink-dim)] hover:text-[var(--ink)] transition">
                 Wszystkie artykuły
@@ -74,7 +74,7 @@ function HomePage(){
           <div className="lg:col-span-4 lg:pl-6 lg:border-l hairline">
             <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">o blogu</div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-7">
-              <StatBlock label="Strategie" value="6" sub="śledzonych w symulatorze" />
+              <StatBlock label="Strategie" value={QRData.strategies.length} sub="śledzonych w symulatorze" />
               <StatBlock label="Lat danych" value="25" sub="2000 do 2025" />
               <StatBlock label="Artykuły" value={QRData.articles.length} sub="i kolejne w drodze" />
               <StatBlock label="Dostęp" value="100" suffix="%" sub="bezpłatnie, bez paywall" />
@@ -88,7 +88,7 @@ function HomePage(){
         <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
             <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatni artykuł</div>
-            <a href="#" className="block group">
+            <a href={latest.href || '#'} className="block group">
               <div className="aspect-[16/10] rounded-xl border hairline bg-gradient-to-br from-[var(--bg-2)] to-[var(--bg-1)] relative overflow-hidden mb-6">
                 <div className="absolute inset-0 grid-dots opacity-50"></div>
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 60" preserveAspectRatio="none">
