@@ -1,5 +1,66 @@
 // kwantowo.pl homepage — hero manifest + featured + posts grid
 
+function NewsletterForm({ layout = 'inline' }) {
+  const [email, setEmail] = React.useState('');
+  const [status, setStatus] = React.useState('idle'); // idle | sending | ok | err
+  const [errMsg, setErrMsg] = React.useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus('ok');
+      } else {
+        setErrMsg(data.error || 'Coś poszło nie tak.');
+        setStatus('err');
+      }
+    } catch {
+      setErrMsg('Brak połączenia. Spróbuj ponownie.');
+      setStatus('err');
+    }
+  }
+
+  if (status === 'ok') {
+    return (
+      <div className="flex items-center gap-2 self-end text-[var(--accent)] mono text-[13px]">
+        ✓ Zapisano! Sprawdź skrzynkę.
+      </div>
+    );
+  }
+
+  return (
+    <form className="flex flex-col gap-1.5 self-end" onSubmit={handleSubmit}>
+      <div className="flex items-center gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="ty@example.com"
+          required
+          className="bg-[var(--bg-2)] border hairline-2 rounded-md px-3 py-2.5 text-[13px] mono text-[var(--ink)] outline-none focus:border-[var(--accent-line)] min-w-[240px]"
+        />
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {status === 'sending' ? 'Zapisuję…' : 'Zapisz się'}
+        </button>
+      </div>
+      {status === 'err' && (
+        <div className="text-[11.5px] text-red-400 mono">{errMsg}</div>
+      )}
+    </form>
+  );
+}
+
 function PostCard({ post, large }) {
   const tagColor = { accent:'var(--accent)', blue:'var(--blue)', warn:'var(--warn)' }[post.color] || 'var(--accent)';
   return (
@@ -156,13 +217,7 @@ function QRHome() {
               Bez płatnych „sygnałów", bez clickbaitu.
             </p>
           </div>
-          <form className="flex items-center gap-2 self-end" onSubmit={e=>e.preventDefault()}>
-            <input type="email" placeholder="ty@example.com"
-              className="bg-[var(--bg-2)] border hairline-2 rounded-md px-3 py-2.5 text-[13px] mono text-[var(--ink)] outline-none focus:border-[var(--accent-line)] min-w-[240px]"/>
-            <button className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition">
-              Zapisz się
-            </button>
-          </form>
+          <NewsletterForm/>
         </div>
       </section>
 
