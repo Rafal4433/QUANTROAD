@@ -97,8 +97,9 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
   }
 
   const last = data[data.length - 1];
-  const lastGemPct  = ((last.gem  / startVal - 1) * 100);
-  const lastMsciPct = ((last.msci / startVal - 1) * 100);
+  const lastBase    = hasInvested ? last.invested : startVal;
+  const lastGemPct  = ((last.gem  / lastBase - 1) * 100);
+  const lastMsciPct = ((last.msci / lastBase - 1) * 100);
 
   return (
     <div className="border hairline rounded-xl bg-[var(--bg-1)] overflow-hidden">
@@ -247,8 +248,9 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
         {/* tooltip */}
         {hover != null && (() => {
           const d = data[hover];
-          const gemPct  = ((d.gem  / startVal - 1) * 100);
-          const msciPct = ((d.msci / startVal - 1) * 100);
+          const base    = hasInvested ? d.invested : startVal;
+          const gemPct  = ((d.gem  / base - 1) * 100);
+          const msciPct = ((d.msci / base - 1) * 100);
           const tx = Math.min(W - 220, Math.max(8, xAt(hover) + 12));
           return (
             <div className="absolute pointer-events-none bg-[var(--bg-2)] border hairline-2 rounded-md px-3 py-2 mono text-[11px] shadow-lg"
