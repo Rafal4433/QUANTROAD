@@ -36,7 +36,7 @@ export default async function handler(req) {
       'Accept': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
     },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, groups: ['187082125416072547'] }),
   });
 
   // 200 = already subscribed, 201 = new subscriber — both are success
