@@ -2,7 +2,7 @@ name: Update Historical Data
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # codziennie 06:00 UTC
+    - cron: '0 6 1 * *'   # 1. dzień miesiąca 06:00 UTC
   workflow_dispatch:       # ręczne uruchomienie z GitHub UI
 
 jobs:
@@ -19,10 +19,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Fetch latest market data
         run: npm run update-data
