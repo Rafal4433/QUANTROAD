@@ -1,9 +1,6 @@
-// GEMExplainer — primer above the simulator. Explains the strategy in plain Polish
-// for the "Mix" audience: simple by default, with details accessible.
+// GEMExplainer — primer above the simulator. Explains the strategy in plain Polish.
 
 function GEMExplainer() {
-  const [open, setOpen] = React.useState(false);
-
   return (
     <section className="border-b hairline">
       <div className="max-w-[1400px] mx-auto px-6 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -56,24 +53,6 @@ function GEMExplainer() {
             </li>
           </ol>
 
-          <button onClick={() => setOpen(!open)}
-            className="mt-8 inline-flex items-center gap-2 text-[12.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--ink)] transition focus-ring rounded">
-            <span>{open ? 'Schowaj' : 'Pokaż'} szczegóły algorytmu</span>
-            <span className="text-[var(--accent)]" style={{transform: open ? 'rotate(90deg)' : 'rotate(0)', transition:'transform .2s'}}>›</span>
-          </button>
-
-          {open && (
-            <div className="mt-5 p-5 bg-[var(--bg-1)] border hairline rounded-xl mono text-[12px] leading-[1.7] text-[var(--ink-dim)]">
-              <div className="text-[var(--ink-mute)] mb-2 text-[10.5px] uppercase tracking-[.14em]"># pseudokod sygnału</div>
-              <div><span className="text-[var(--accent)]">def</span> rebalance(date):</div>
-              <div className="pl-4">mom = score(asset, date) <span className="text-[var(--ink-faint)]"># 1m·3m·6m·12m, waga równa</span></div>
-              <div className="pl-4"><span className="text-[var(--accent)]">if</span> mom[best_risk] &lt; mom[T-bill]:</div>
-              <div className="pl-8"><span className="text-[var(--ink)]">return</span> safe_haven    <span className="text-[var(--ink-faint)]"># bessa</span></div>
-              <div className="pl-4"><span className="text-[var(--accent)]">if</span> abs(mom[best] − mom[current]) &lt; hysteresis:</div>
-              <div className="pl-8"><span className="text-[var(--ink)]">return</span> current       <span className="text-[var(--ink-faint)]"># anti-whipsaw</span></div>
-              <div className="pl-4"><span className="text-[var(--ink)]">return</span> argmax(mom[risky_universe])</div>
-            </div>
-          )}
         </div>
 
         {/* RIGHT — proof block */}
