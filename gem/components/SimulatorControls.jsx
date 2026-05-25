@@ -7,6 +7,7 @@ const RISKY = [
   { id: 'exus', ticker: 'VGTSX', sub: 'Intl ex-US' },
   { id: 'em',   ticker: 'VEIEX', sub: 'Emerging Mkts' },
   { id: 'epol', ticker: 'EPOL',  sub: 'Polska MSCI' },
+  { id: 'brk',  ticker: 'BRK.B', sub: 'Berkshire' },
   { id: 'gld',  ticker: 'GLD',   sub: 'Złoto' },
   { id: 'btc',  ticker: 'BTC',   sub: 'Bitcoin' },
 ];

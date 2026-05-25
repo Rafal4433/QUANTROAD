@@ -20,6 +20,7 @@ TICKERS = {
     'btc':   'BTC-USD',  # Bitcoin
     'gld':   'GLD',      # Gold
     'epol':  'EPOL',     # Poland ETF
+    'brk':   'BRK-B',    # Berkshire Hathaway Class B
     'bonds': 'BND',      # Total Bond Market
     'tlt':   'TLT',      # Long-Term Treasury
     'shy':   'SHY',      # Short-Term Treasury

@@ -270,6 +270,7 @@ const ASSET_META = {
   exus:  { ticker: 'VGTSX', sub: 'Intl ex-US' },
   em:    { ticker: 'VEIEX', sub: 'Emerging Mkts' },
   epol:  { ticker: 'EPOL',  sub: 'Polska MSCI' },
+  brk:   { ticker: 'BRK.B', sub: 'Berkshire' },
   gld:   { ticker: 'GLD',   sub: 'Złoto' },
   btc:   { ticker: 'BTC',   sub: 'Bitcoin' },
   bonds: { ticker: 'VBMFX', sub: 'Bonds Total' },

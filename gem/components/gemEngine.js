@@ -47,7 +47,7 @@ function runBacktest(params) {
 
   const realMonths = historicalData.length;
 
-  const ALL_ASSETS = ['usa', 'exus', 'nq', 'em', 'epol', 'gld', 'btc', 'bonds', 'tlt', 'shy'];
+  const ALL_ASSETS = ['usa', 'exus', 'nq', 'em', 'epol', 'brk', 'gld', 'btc', 'bonds', 'tlt', 'shy'];
   const pArr = {};
   ALL_ASSETS.forEach(a => {
     pArr[a] = historicalData.map(d => (d[a] !== undefined && d[a] !== null) ? d[a] : null);
@@ -68,7 +68,7 @@ function runBacktest(params) {
 
   const roc = (priceArr, i) => ensembleMomentum ? ensembleROC(priceArr, i) : getROC(priceArr, i, lookback);
 
-  const NAMES = { usa: 'USA Eq', exus: 'Ex-US Eq', nq: 'Nasdaq', em: 'Emerging Mkt', epol: 'Poland (EPOL)', gld: 'Gold', btc: 'Bitcoin', bonds: 'Bonds (Agg)', tlt: 'TLT (Long Bond)', shy: 'SHY (Short Bond)', cash: 'Cash' };
+  const NAMES = { usa: 'USA Eq', exus: 'Ex-US Eq', nq: 'Nasdaq', em: 'Emerging Mkt', epol: 'Poland (EPOL)', brk: 'Berkshire Hathaway', gld: 'Gold', btc: 'Bitcoin', bonds: 'Bonds (Agg)', tlt: 'TLT (Long Bond)', shy: 'SHY (Short Bond)', cash: 'Cash' };
   const SAFE_BOND_CANDIDATES = ['tlt', 'shy', 'bonds', 'cash'];
 
   for (let i = startIndex; i < realMonths; i++) {
