@@ -17,6 +17,12 @@ const DEFAULT_PARAMS = {
   endDate:         '',
 };
 
+function formatDataMonth(dateKey) {
+  const [year, month] = dateKey.split('-').map(Number);
+  const date = new Date(year, month - 1, 1);
+  return date.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+}
+
 function GEMSimulator() {
   const [params, setParams] = React.useState(DEFAULT_PARAMS);
   const [historicalData, setHistoricalData] = React.useState(null);
@@ -45,6 +51,16 @@ function GEMSimulator() {
       .then(data => setHistoricalData(data))
       .catch(() => setLoadError(true));
   }, []);
+
+  const dataStatus = React.useMemo(() => {
+    const lastDate = historicalData?.[historicalData.length - 1]?.date;
+    if (!lastDate) return null;
+
+    return {
+      lastDate,
+      label: formatDataMonth(lastDate),
+    };
+  }, [historicalData]);
 
   // Uruchomienie backtestу
   const result = React.useMemo(() => {
@@ -181,7 +197,21 @@ function GEMSimulator() {
                 {chartData && <span className="ml-2 text-[var(--ink-faint)]">· {chartData.meta.months} mies. · wdrożono {chartData.meta.totalCapitalDeployed.toLocaleString('pl-PL')} PLN</span>}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-start sm:items-end gap-2">
+              {dataStatus && (
+                <div className="rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-left sm:text-right">
+                  <div className="mono text-[10px] uppercase tracking-[.16em] text-[var(--ink-faint)]">
+                    dane rynkowe
+                  </div>
+                  <div className="mt-0.5 text-[12px] text-[var(--ink-dim)]">
+                    do <span className="text-[var(--ink)]">{dataStatus.label}</span>
+                    <span className="text-[var(--ink-faint)]"> · zamknięcie miesiąca</span>
+                  </div>
+                  <div className="mt-0.5 mono text-[10px] uppercase tracking-[.12em] text-[var(--ink-faint)]">
+                    auto-update: 1. dzień mies. 06:00 UTC
+                  </div>
+                </div>
+              )}
               <button onClick={exportCSV} className="px-3 py-1.5 rounded-md bg-[var(--bg-2)] border hairline text-[12px] text-[var(--ink-dim)] hover:text-[var(--ink)] transition">
                 Eksport CSV
               </button>
