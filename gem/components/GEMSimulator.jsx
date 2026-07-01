@@ -180,7 +180,7 @@ function GEMSimulator() {
     <div className="min-h-screen flex flex-col">
       {/* MAIN GRID */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[380px_1fr]">
-        <SimulatorControls params={params} setParams={setParams} />
+        <SimulatorControls params={params} setParams={setParams} historicalData={historicalData} />
 
         <main className="main-content min-w-0">
           {/* Title row */}

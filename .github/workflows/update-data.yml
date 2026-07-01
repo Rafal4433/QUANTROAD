@@ -15,10 +15,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Fetch latest market data
         run: |
-          pip install yfinance --quiet
+          python -m pip install --upgrade pip --quiet
+          python -m pip install yfinance --quiet
           python scripts/fetch_data.py
+
+      - name: Validate historical data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('gem/historical_data.json').read_text())
+          if not data:
+              raise SystemExit('historical_data.json is empty')
+
+          required = {'date', 'usa', 'exus', 'nq', 'em', 'btc', 'gld', 'epol', 'bonds', 'tlt', 'shy', 'brk'}
+          previous = ''
+          for row in data:
+              missing = required - set(row)
+              if missing:
+                  raise SystemExit(f"{row.get('date', '<no date>')}: missing keys {sorted(missing)}")
+              if row['date'] <= previous:
+                  raise SystemExit(f"dates are not strictly increasing near {row['date']}")
+              previous = row['date']
+
+          latest_nulls = [key for key in required - {'date'} if data[-1].get(key) is None]
+          if latest_nulls:
+              raise SystemExit(f"{data[-1]['date']}: null values {latest_nulls}")
+
+          print(f"OK: {len(data)} rows, latest {data[-1]['date']}")
+          PY
 
       - name: Commit if data changed
         run: |

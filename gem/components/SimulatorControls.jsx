@@ -85,9 +85,11 @@ function Toggle({ on, onChange, label, desc }) {
   );
 }
 
-function SimulatorControls({ params, setParams }) {
+function SimulatorControls({ params, setParams, historicalData = [] }) {
   const p = params;
   const upd = (k, v) => setParams({ ...p, [k]: v });
+  const firstDataYear = parseInt(historicalData[0]?.date, 10) || 1998;
+  const lastDataYear = parseInt(historicalData[historicalData.length - 1]?.date, 10) || new Date().getFullYear();
 
   const toggleRisk = id => {
     const next = p.riskAssets.includes(id)
@@ -151,10 +153,10 @@ function SimulatorControls({ params, setParams }) {
             <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
               <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">od</span>
               <input
-                type="number" min="1998" max="2024"
+                type="number" min={firstDataYear} max={lastDataYear}
                 value={parseInt(p.startDate) || 2000}
                 onChange={e => {
-                  const y = Math.max(1998, Math.min(2024, +e.target.value || 2000));
+                  const y = Math.max(firstDataYear, Math.min(lastDataYear, +e.target.value || 2000));
                   upd('startDate', `${y}-01-01`);
                 }}
                 className="bg-transparent outline-none w-full mono text-[13px] tnum text-[var(--ink)]"
@@ -164,11 +166,11 @@ function SimulatorControls({ params, setParams }) {
             <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
               <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">do</span>
               <input
-                type="number" min="1999" max="2025"
-                value={p.endDate ? parseInt(p.endDate) : 2025}
+                type="number" min={firstDataYear} max={lastDataYear}
+                value={p.endDate ? parseInt(p.endDate) : lastDataYear}
                 onChange={e => {
-                  const y = Math.max(1999, Math.min(2025, +e.target.value || 2025));
-                  upd('endDate', y === 2025 ? '' : `${y}-12-31`);
+                  const y = Math.max(firstDataYear, Math.min(lastDataYear, +e.target.value || lastDataYear));
+                  upd('endDate', y === lastDataYear ? '' : `${y}-12-31`);
                 }}
                 className="bg-transparent outline-none w-full mono text-[13px] tnum text-[var(--ink)]"
               />
