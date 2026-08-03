@@ -2,7 +2,7 @@ name: Update Historical Data
 
 on:
   schedule:
-    - cron: '0 10 3 * *'  # 3. dzień miesiąca 10:00 UTC
+    - cron: '0 2 3 * *'   # 3. dzień miesiąca, 04:00 czasu polskiego (CEST)
   workflow_dispatch:       # ręczne uruchomienie z GitHub UI
 
 jobs:
