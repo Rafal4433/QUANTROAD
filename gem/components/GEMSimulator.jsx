@@ -46,7 +46,7 @@ function GEMSimulator() {
 
   // Ładowanie danych historycznych raz
   React.useEffect(() => {
-    fetch('historical_data.json')
+    fetch('historical_data.json', { cache: 'no-store' })
       .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(data => setHistoricalData(data))
       .catch(() => setLoadError(true));
@@ -208,7 +208,7 @@ function GEMSimulator() {
                     <span className="text-[var(--ink-faint)]"> · zamknięcie miesiąca</span>
                   </div>
                   <div className="mt-0.5 mono text-[10px] uppercase tracking-[.12em] text-[var(--ink-faint)]">
-                    auto-update: 1. dzień mies. 06:00 UTC
+                    auto-update: 3. dzień mies. 04:00 CEST / 03:00 CET
                   </div>
                 </div>
               )}
