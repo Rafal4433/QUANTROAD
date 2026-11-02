@@ -2,63 +2,69 @@
 
 ## WHAT
 
-**Polish GEM (Global Equity Momentum) backtesting simulator.**
-SPA React dla polskich inwestorów: symulacja rotacji momentum między US equities,
-Ex-US equities i obligacjami, z pełnym modelem polskiego podatku Belka 19%.
+**Polski symulator strategii GEM (Global Equity Momentum) i blog o inwestowaniu.**
+Statyczna strona dla polskich inwestorów: rotacja momentum między aktywami ryzykownymi
+i bezpiecznymi z modelem podatku Belki 19%.
 
-**Tech stack (wersje wiążące):**
-- React 19 + React Router 7 — JSX, brak TypeScript
-- TailwindCSS 4 via `@tailwindcss/vite` — główny system stylów
-- Recharts 3 — wykresy finansowe (equity curve, drawdown)
-- Lucide React 1.x — ikony w komponentach symulatora
-- Vite 8 + `@vitejs/plugin-react` — bundler i dev server
-- ESLint 9 — linting; brak Prettier/Biome
-- Netlify Functions (ESM `.mjs`) + Netlify Blobs — serverless data layer
-- yahoo-finance2 — tylko w pipeline danych (`scripts/fetch-data.js`)
+**Stan techniczny (bez kroku build):**
+- Strony HTML w `gem/`, JSX kompilowany w przeglądarce przez `@babel/standalone`
+- React 18 i ReactDOM z unpkg (UMD), komponenty dzielą się przez `window.*`
+- Tailwind z `cdn.tailwindcss.com` (klasy w JSX), tokeny i klasy wspólne w `gem/qr.css`
+- Wykres GEM to własny SVG. Recharts 2 ładuje tylko `sharpe-ratio.html`
+- Netlify: `publish = "gem"`, funkcja `netlify/functions/subscribe.mjs` (MailerLite,
+  zmienna `MAILERLITE_API_KEY`), Netlify Forms dla formularza `kontakt`
+- Dane: `scripts/fetch_data.py` (Yahoo Finance) i GitHub Action co miesiąc zapisują
+  `gem/historical_data.json`
+- Brak TypeScriptu, brak `package.json`, brak lintera i testów
 
-**Układ katalogów src/:**
+**Układ:**
 ```
-src/
-├── simulator/   — 7 komponentów React składających UI symulatora GEM
-├── backtest/    — gemEngine.js (czysty JS, bez React) + test_engine.js
-├── shell/       — Layout.jsx (Outlet wrapper), AppRoutes.jsx
-├── pages/       — ArticleGEM.jsx, Home.jsx (poziom route)
-└── index.css    — punkt wejścia Tailwind + globalne tokeny CSS
+gem/
+├── index.html, gem.html, strategie.html, artykuly.html, sharpe-ratio.html
+├── qr.css                  — tokeny i klasy wspólne
+├── historical_data.json    — dane miesięczne od 1998, format niżej
+└── components/
+    ├── gemEngine.js        — silnik, czysty JS, eksportuje window.runBacktest
+    ├── gemSummary.jsx      — domyślne parametry i wspólne wyniki dla stron
+    ├── GEMSimulator.jsx    — stan parametrów, wywołanie silnika, układ symulatora
+    ├── SimulatorControls.jsx, KPIRow.jsx, EquityCurveChart.jsx,
+    │   RebalancingLog.jsx, CostBreakdown.jsx, GEMExplainer.jsx
+    ├── QRLayout.jsx        — nawigacja, stopka, modale
+    ├── QRData.jsx          — lista artykułów i strategii (bez wyników liczbowych)
+    └── icons.jsx
+netlify/functions/subscribe.mjs
+scripts/fetch_data.py
 ```
 
-`public/assets/` — legacy szablon Solid State HTML5UP (CSS/SASS/JS). Nie edytować.
+`historical_data.json`: `[{ date: "YYYY-MM", usa, exus, nq, em, epol, brk, gld, btc, bonds, tlt, shy }]`.
+Ceny skorygowane w USD. Część aktywów startuje później (np. `gld` 2004-11, `tlt` 2002-07).
 
 ---
 
 ## WHY
 
-**Silnik backtestowy to czysty JS, nie React.**
-`backtest/gemEngine.js` eksportuje jedną funkcję `runBacktest(params)`.
-Zero zależności React — można uruchomić przez `node` bez przeglądarki.
-`simulator/GEMSimulator.jsx` wywołuje go przez `useMemo`. Ta izolacja jest celowa.
+**Silnik to czysty JS.** `runBacktest(params)` nie zależy od Reacta. Można go uruchomić
+w Node przez `vm`, podstawiając `window`.
 
-**Brak TypeScript — świadoma decyzja projektowa.**
-Projekt priorytetyzuje szybkość iteracji nad bezpieczeństwem typów.
-Nie dodawać plików `.ts`/`.tsx` ani `tsconfig.json`.
-JSDoc w `backtest/gemEngine.js` jest akceptowalny dla dokumentacji parametrów.
+**Jedno źródło liczb.** Domyślne parametry i wyniki pokazywane poza symulatorem pochodzą
+z `gemSummary.jsx`, które woła `runBacktest`. Nie wpisuj wyników na stałe do treści.
 
-**TailwindCSS 4 to główny system stylów; SASS to legacy.**
-`public/assets/sass/` to pre-kompilowany szablon HTML5UP. Nigdy go nie edytować.
-Nowe UI używa klas Tailwind. Style komponentowe używają custom properties CSS
-zdefiniowanych w `src/index.css` (tokeny: `--bg-card`, `--accent-primary`, itp.).
+**Brak TypeScriptu to świadoma decyzja.** Nie dodawaj plików `.ts`, `.tsx` ani `tsconfig.json`.
 
-**Netlify Blobs jako główny magazyn danych.**
-`netlify/functions/historical-data.mjs` czyta z Blobs, fallback do
-`public/historical_data.json`. Blob jest zapisywany przez `update-data.mjs`
-(codziennie, 06:00 UTC). Statyczny fallback obsługuje cold starty i local dev.
+**Co silnik modeluje:** podatek Belki 19% rozliczany co roku w kwietniu, przenoszenie strat
+do 5 lat, opcję IKE (wyłącza podatek), prowizję, spread FX, dźwignię z kosztem 4% rocznie,
+bufor histerezy.
 
-**Polski kontekst podatkowy — cechy domenowe, nie błędy.**
-Silnik implementuje: Belka 19% podatek od zysków, śledzenie lot FIFO,
-przenoszenie strat (5 lat), zwolnienie IKE, obniżkę IKZE.
-`rebalLog` zawiera historię transakcji z podstawą kosztową i naliczonym podatkiem.
+**Czego silnik nie modeluje. Nie obiecuj tego w treści:**
+- kursu USD/PLN: wpłaty są w PLN, a zwroty pochodzą z notowań w USD
+- IKZE oraz limitów wpłat na IKE
+- prawdziwych S&P 500 i MSCI World: S&P 500 to 100% VTSMX, a MSCI to 60% VTSMX i 40% VGTSX
+- dokładnego CAGR: to przybliżenie, wartość końcowa do średniego kapitału, nie IRR
 
-**`public/historical_data.json`** — 1998-2025, dane miesięczne OHLCV dla 10 tickerów.
-Format: `[{ date: "YYYY-MM", usa, exus, nq, em, btc, gld, epol, bonds, tlt, shy }]`.
+**Znane rozbieżności w silniku:**
+- `portfolioValues` GEM nie zawiera podatku od niezrealizowanego zysku, a `benchmarkValues` zawiera.
+  Do porównań używaj `liquidation.gemFinalNet` i `liquidation.benchFinalNet`.
+- Sharpe, obsunięcie i Ulcer liczone są na saldzie z wpłatami, które je zniekształcają.
 
 ---
 
@@ -66,41 +72,47 @@ Format: `[{ date: "YYYY-MM", usa, exus, nq, em, btc, gld, epol, bonds, tlt, shy 
 
 **Uruchomienie lokalne:**
 ```bash
-npm run dev          # Vite dev server :5173 (bez Netlify Functions)
-netlify dev          # Vite + Functions proxy :8888 — WYMAGANE gdy symulator ładuje dane
+python3 -m http.server 8791 --directory gem   # strony i symulator
+netlify dev                                   # gdy potrzebny jest /api/subscribe
 ```
-Przy `npm run dev` symulator nie dotrze do `/.netlify/functions/historical-data`.
-Używaj `netlify dev` do pełnego developmentu.
 
-**Aktualizacja danych rynkowych:**
+**Aktualizacja danych:**
 ```bash
-npm run update-data  # node scripts/fetch-data.js → public/historical_data.json
+pip install yfinance && python scripts/fetch_data.py
 ```
-Uruchom lokalnie po zmianie zakresu dat lub dodaniu tickera. Wynik commitować do repo
-— to jest statyczny fallback dla cold startów Netlify.
+Normalnie robi to `.github/workflows/update-data.yml` 3. dnia miesiąca.
 
-**Linting i build:**
-```bash
-npm run lint         # ESLint 9 — jedyne narzędzie formatowania
-npm run build        # Vite build → dist/
-npm run preview      # Podgląd dist/ lokalnie
-```
+**Nowy parametr symulatora:**
+1. `gemSummary.jsx` — dodaj do `GEM_DEFAULT_PARAMS`
+2. `gemEngine.js` — obsłuż w `runBacktest()`
+3. `SimulatorControls.jsx` — dodaj kontrolkę
 
-**Dodanie nowego parametru symulatora:**
-1. `simulator/GEMSimulator.jsx` — dodaj do `DEFAULT_PARAMS`
-2. `backtest/gemEngine.js` — obsłuż parametr w logice `runBacktest()`
-3. `simulator/SimulatorControls.jsx` — dodaj kontrolkę UI
+**Nowa strona:** utwórz HTML w `gem/`, dodaj link do `NAV` w `QRLayout.jsx`.
 
-**Dodanie nowej strony/route:**
-1. Utwórz `pages/NowaSrona.jsx`
-2. Dodaj `<Route>` w `shell/AppRoutes.jsx`
-3. Dodaj link nawigacyjny w `shell/Layout.jsx`
+**Nowy ticker:** `TICKERS` w `scripts/fetch_data.py`, lista `required` w workflow,
+`ALL_ASSETS` i `NAMES` w `gemEngine.js`, listy `RISKY` lub `SAFE` w `SimulatorControls.jsx`.
 
-**Dodanie nowego tickera danych:**
-1. Dodaj ticker do `TICKERS` w `scripts/fetch-data.js`
-2. Dodaj ten sam ticker do `netlify/functions/update-data.mjs`
-3. Uruchom `npm run update-data` (lokalnie, commituj JSON)
-4. Zaktualizuj `ASSET_UNIVERSE` w `simulator/SimulatorControls.jsx`
+**Silnika nie zmieniaj bez wyraźnej zgody właściciela projektu.** Każda zmiana przesuwa
+wszystkie publikowane wyniki.
 
-**Netlify Functions** — pliki `.mjs` (ESM). `node_bundler = esbuild` (netlify.toml).
-Nie używać CommonJS `require()` w funkcjach.
+---
+
+## Design
+
+**Użytkownik:** polski inwestor, który chce wiedzieć, ile zostanie mu po podatku Belki.
+
+**Treść i liczby muszą być prawdziwe.**
+- Każdy wynik pochodzi z silnika albo ma podane źródło i założenia.
+- Przy wyniku podawaj okres, benchmark i koszty.
+- Jeśli wynik nie potwierdza zdania na stronie, zmień zdanie, nie liczbę.
+- Nie wymyślaj autora, czytelników, opinii ani statystyk.
+- Nie dodawaj elementów pozornych: wyszukiwarek bez działania, ozdobnych wykresów,
+  wskaźników „na żywo” przy danych, które nie są na żywo.
+
+**Nowe i przerabiane elementy:**
+- Bez gradientów, glassmorphismu, tła z kropek i migających kropek.
+- Bez etykiet CAPS nad nagłówkami i wyróżniania jednego słowa w nagłówku.
+- Bez strzałek w przyciskach. Numeracja 01/02 tylko przy prawdziwych krokach.
+- Tekst co najmniej 13 px, kontrast co najmniej 4.5:1.
+
+Obecny wygląd strony jeszcze nie spełnia tych zasad. Nie kopiuj go do nowych elementów.

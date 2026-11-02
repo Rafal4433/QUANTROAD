@@ -1,126 +1,50 @@
 ---
 name: buduj-komponent-symulatora
 description: >
-  Aktywuje się gdy użytkownik buduje, modyfikuje lub dodaje komponent React do interfejsu
-  symulatora GEM w katalogu src/simulator/. Wektory semantyczne: nowe kontrolki parametrów
-  (suwak, toggle, segmented button, chip wyboru aktywów), nowe panele wyświetlające KPI,
-  modyfikacja wykresu Recharts (nowa seria, custom tooltip, sampling punktów), eksport CSV
-  z RebalancingLog, responsywny layout siatki, formatowanie liczb PLN/procent, state
-  management dla 11 parametrów symulacji, łańcuch useMemo wywołujący runBacktest().
-  Komponenty symulatora to precyzyjne instrumenty finansowe oprawione w szkło — każdy
-  parametr kontroluje miliony złotych wirtualnego kapitału, błąd formatowania zepsuje
-  prezentację klientowi jak rysa na tarczy zegarka szwajcarskiego.
+  Użyj przy dodawaniu lub zmianie komponentów symulatora GEM w gem/components/:
+  kontrolek parametrów, KPI, wykresu SVG, logu transakcji, kosztów i eksportu CSV.
 ---
 
-## Protokół Budowy Komponentu Symulatora
+## Budowa komponentu symulatora
 
-### ZANIM ZACZNIESZ — Obowiązkowy Checklist
+Zadanie: $ARGUMENTS
 
-1. **CZYTAJ** orchestrator: `src/simulator/GEMSimulator.jsx` — zrozum params → useMemo → result flow
-2. **CZYTAJ** `src/simulator/SimulatorControls.jsx` — wzorzec stanu: `setParams(p => ({ ...p, [key]: value }))`
-3. **SPRAWDŹ** CSS tokeny w `src/index.css` — użyj istniejących custom properties, nie twórz nowych
+### Zanim zaczniesz
 
-### Zadanie: $ARGUMENTS
+Przeczytaj `gem/components/GEMSimulator.jsx`, `SimulatorControls.jsx` i `gemSummary.jsx`.
 
-### Anatomia Komponentu Symulatora
+### Przepływ danych
 
 ```
-GEMSimulator.jsx (orchestrator)
-  ├── state: params (11 pól), data (historyczne), error
-  ├── useMemo: result = runBacktest(params, data)  ← JEDYNY punkt wywołania silnika
-  ├── SimulatorControls → setParams callback
-  ├── KPIRow → result.kpi
-  ├── EquityCurveChart → result.equityCurve (sampled do 180 pkt)
-  ├── CostBreakdown → result.annualStats
-  ├── RebalancingLog → result.rebalLog
-  └── UlcerIndexPanel → result.ulcerData
+gemSummary.jsx        GEM_DEFAULT_PARAMS, loadGemData, useGemSummary
+GEMSimulator.jsx      params → useMemo(runBacktest) → chartData
+  ├── SimulatorControls  zmienia params przez setParams
+  ├── KPIRow             chartData.kpis, chartData.costs.gem.net
+  ├── EquityCurveChart   chartData.equity (własny SVG)
+  ├── RebalancingLog     chartData.log
+  ├── CostBreakdown      chartData.costs
+  └── MomentumHeatmap    params, historicalData
 ```
 
-### Wzorzec Nowej Kontrolki Parametru
+Komponenty nie używają modułów. Każdy plik kończy się `window.NazwaKomponentu = NazwaKomponentu`,
+a kolejność skryptów ustala HTML strony.
 
-```jsx
-// W SimulatorControls.jsx — użyj istniejącego wzorca LightSlider/LightInput
-<LightSlider
-  label="NAZWA_PARAMETRU"
-  value={params.nazwaParametru}
-  min={MIN} max={MAX} step={STEP}
-  onChange={v => setParams(p => ({ ...p, nazwaParametru: v }))}
-  hint="Opis w języku polskim"
-/>
-```
+### Nowa kontrolka
 
-### Wzorzec Nowego Panelu KPI
+Użyj `Slider`, `NumInput`, `Toggle` lub `Chip` z `SimulatorControls.jsx`.
+Parametr dodaj do `GEM_DEFAULT_PARAMS` w `gemSummary.jsx`.
 
-```jsx
-// Używaj CSS custom properties z src/index.css — nigdy hardcode hex
-<div className="sim-panel">
-  <div className="sim-panel-title">TYTUŁ</div>
-  <div style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
-    {formatPercent(result.kpi.wartość)}
-  </div>
-</div>
-```
+### Zasady
 
-### Formatowanie Liczb — Reguły Kanoniczne
-
-```js
-// PLN z lokalizacją polską
-value.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-
-// Procenty (CAGR, Sharpe jako %)
-(value * 100).toFixed(2) + '%'
-
-// Duże liczby (K/M skrót)
-value >= 1e6 ? (value / 1e6).toFixed(1) + 'M zł' :
-value >= 1e3 ? (value / 1e3).toFixed(0) + 'K zł' : value.toFixed(0) + ' zł'
-```
-
-### Wzorzec Wykresu Recharts
-
-```jsx
-import { ComposedChart, Line, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
-// Sampling: thinning 250+ miesięcy do 180 punktów — zawsze zachowaj ostatni punkt
-function sampleData(arr, maxPoints = 180) {
-  if (arr.length <= maxPoints) return arr;
-  const step = Math.ceil(arr.length / maxPoints);
-  const sampled = arr.filter((_, i) => i % step === 0);
-  if (sampled[sampled.length - 1] !== arr[arr.length - 1]) {
-    sampled.push(arr[arr.length - 1]);
-  }
-  return sampled;
-}
-
-// Custom Tooltip
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background: 'var(--bg-tooltip)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.5rem 0.75rem', borderRadius: 6 }}>
-      <p style={{ color: 'var(--text-secondary)', fontSize: 11 }}>{label}</p>
-      {payload.map(p => (
-        <p key={p.dataKey} style={{ color: p.color, fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-          {p.name}: {formatCurrency(p.value)}
-        </p>
-      ))}
-    </div>
-  );
-};
-```
-
-### Reguły Nienaruszalne
-
-- **NIGDY** nie wywołuj `runBacktest()` poza `useMemo` w `GEMSimulator.jsx`
-- **NIGDY** nie dodawaj TypeScript — projekt JSX only, brak `.ts`/`.tsx`
-- **ZAWSZE** używaj klas `.sim-*` z `src/index.css` dla nowych paneli, nie twórz inline styles dla kolorów
-- **SAMPLING** wykresu: thinning do 180 punktów przy zachowaniu ostatniego punktu
-- **STATE UPDATE**: zawsze używaj wzorca funkcyjnego `setParams(p => ({ ...p, key: val }))`, nigdy bezpośrednio `setParams({ ...params, key: val })`
+- Wyniki pochodzą z `runBacktest`. Nie wpisuj ich na stałe.
+- Nowe założenie modelu opisz w bloku `Assumptions` w `GEMSimulator.jsx`.
+- Kwoty formatuj przez `toLocaleString('pl-PL')`.
+- Style według skilla `stylizuj-interfejs`. Bez TypeScriptu.
 
 ### Weryfikacja
 
 ```bash
-npm run dev    # lub netlify dev jeśli komponent ładuje dane historyczne
-npm run lint   # ESLint 9 — jedyne narzędzie formatowania
+python3 -m http.server 8791 --directory gem
 ```
 
-Sprawdź w przeglądarce: responsywność na 768px i 1280px, wartości PLN sformatowane,
-wykres renderuje bez błędów konsolowych, KPI widoczne.
+Otwórz `gem.html`, zmień parametr i sprawdź wynik, konsolę oraz szerokości 375 i 1440 px.
