@@ -129,7 +129,7 @@ function QRContactModal({ onClose }) {
 
             {status === 'err' && (
               <div className="text-[12px] text-red-400">
-                Coś poszło nie tak. Spróbuj ponownie lub napisz bezpośrednio na hello@kwantowo.pl.
+                Nie udało się wysłać wiadomości. Spróbuj ponownie.
               </div>
             )}
 
@@ -192,7 +192,7 @@ function QRNewsletterModal({ onClose }) {
         <div className="flex items-center justify-between mb-5">
           <div>
             <div className="text-[15px] font-semibold">Newsletter</div>
-            <div className="mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mt-0.5">raz na 2 tygodnie · bezpłatnie</div>
+            <div className="mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mt-0.5">bezpłatnie</div>
           </div>
           <button
             onClick={onClose}
@@ -258,7 +258,7 @@ function QRTopNav({ active = 'home' }) {
               <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
             </div>
             <div className="leading-tight">
-              <div className="text-[14px] font-medium tracking-[-0.01em]">kwantowo.pl</div>
+              <div className="text-[14px] font-medium tracking-[-0.01em]">QuantRoad</div>
             </div>
           </a>
 
@@ -277,11 +277,6 @@ function QRTopNav({ active = 'home' }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--bg-2)] border hairline mono text-[11px] text-[var(--ink-mute)]">
-              {window.Ic && <Ic.Search width="11" height="11"/>}
-              <span>szukaj artykułu</span>
-              <span className="ml-3 px-1 py-0.5 rounded bg-[var(--bg-3)] text-[9.5px] text-[var(--ink-faint)]">⌘K</span>
-            </div>
             <button
               onClick={() => setNewsletterOpen(true)}
               className="hidden sm:inline-block px-3 py-1.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[12.5px] font-semibold hover:brightness-110 transition"
@@ -310,11 +305,11 @@ function QRFooter() {
               <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
                 <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
               </div>
-              <span className="text-[15px] font-medium">kwantowo.pl</span>
+              <span className="text-[15px] font-medium">QuantRoad</span>
             </div>
             <p className="text-[13px] text-[var(--ink-mute)] mt-3 leading-relaxed max-w-[44ch]">
-              Niezależny blog o ilościowym podejściu do inwestowania. Strategie, narzędzia,
-              otwarte dane. <span className="text-[var(--ink-dim)]">Bez porad inwestycyjnych. Wszystko, co czytasz, to edukacja.</span>
+              Niezależny blog o ilościowym podejściu do inwestowania. Strategie i narzędzia.{' '}
+              <span className="text-[var(--ink-dim)]">Bez porad inwestycyjnych. Wszystko, co czytasz, to edukacja.</span>
             </p>
           </div>
 
@@ -342,12 +337,8 @@ function QRFooter() {
         </div>
         <div className="border-t hairline">
           <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3 mono text-[10.5px] uppercase tracking-[.14em] text-[var(--ink-faint)]">
-            <div>© 2025 kwantowo.pl · prywatny blog edukacyjny</div>
-            <div className="flex items-center gap-3">
-              <span>nie stanowi porady inwestycyjnej</span>
-              <span>·</span>
-              <a className="hover:text-[var(--ink-mute)]" href="#">polityka prywatności</a>
-            </div>
+            <div>© {new Date().getFullYear()} QuantRoad · prywatny blog edukacyjny</div>
+            <div>nie stanowi porady inwestycyjnej</div>
           </div>
         </div>
       </footer>

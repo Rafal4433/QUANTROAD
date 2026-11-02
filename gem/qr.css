@@ -1,4 +1,4 @@
-/* kwantowo.pl shared styles. Loaded by every page. */
+/* QuantRoad shared styles. Loaded by every page. */
 :root{
   --bg:            #0a0d12;
   --bg-1:          #0f141b;
@@ -37,8 +37,6 @@ input[type=range]:focus{ outline: none; }
 .grid-dots{ background-image: radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px); background-size: 16px 16px; }
 .hairline{ border-color: var(--line); }
 .hairline-2{ border-color: var(--line-2); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
-.live-dot{ animation: blink 1.6s ease-in-out infinite; }
 .focus-ring:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
 .glass{ backdrop-filter: blur(8px); background: rgba(10,13,18,.72); }
 .step-num{ width:18px; height:18px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-family:'Geist Mono',monospace; font-size:10px; font-weight:600; background: var(--bg-3); color: var(--ink-dim); border:1px solid var(--line-2); }

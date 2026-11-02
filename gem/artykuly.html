@@ -11,7 +11,7 @@
 </script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Artykuły · kwantowo.pl</title>
+<title>Artykuły · QuantRoad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
@@ -29,7 +29,8 @@
 <script type="text/babel">
 function fmtDate(iso){ return new Date(iso).toLocaleDateString('pl-PL', { day:'2-digit', month:'short', year:'numeric' }); }
 
-const CATS = ['Wszystkie','Strategia','Podatki','Metryki','Egzekucja','Wielkość pozycji','Analiza','Alokacja','Krypto'];
+const CATS = ['Wszystkie', ...new Set(QRData.articles.map(a => a.cat))];
+const SHOW_FILTERS = QRData.articles.length > 1;
 
 function ArticlesPage(){
   const [cat, setCat] = React.useState('Wszystkie');
@@ -47,17 +48,17 @@ function ArticlesPage(){
       {/* Header */}
       <section className="border-b hairline">
         <div className="max-w-[1400px] mx-auto px-6 pt-14 pb-10">
-          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">archiwum · {QRData.articles.length} artykułów</div>
+          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">archiwum</div>
           <h1 className="serif text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.02em]">
             Wszystko, co dotąd <span className="italic text-[var(--accent)]">policzyłem</span>.
           </h1>
           <p className="text-[15px] text-[var(--ink-dim)] mt-5 max-w-[64ch] leading-relaxed">
-            Strategie, podatki, koszty egzekucji, metryki ryzyka. Każdy tekst ma kod, dane i wykres do replikacji w domu.
+            Teksty o metrykach ryzyka, strategiach i podatkach.
           </p>
         </div>
 
         {/* Filters */}
-        <div className="border-t hairline">
+        {SHOW_FILTERS && <div className="border-t hairline">
           <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-1.5 flex-wrap">
               {CATS.map(c => (
@@ -75,20 +76,20 @@ function ArticlesPage(){
                      className="bg-transparent outline-none w-[180px] text-[var(--ink)] placeholder-[var(--ink-faint)]"/>
             </div>
           </div>
-        </div>
+        </div>}
       </section>
 
       {/* List */}
       <section className="max-w-[1400px] mx-auto px-6 py-10">
-        <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">
+        {SHOW_FILTERS && <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">
           {filtered.length} {filtered.length === 1 ? 'wynik' : 'wyników'}
           {cat !== 'Wszystkie' && <span> · {cat}</span>}
-        </div>
+        </div>}
 
         <ul className="divide-y hairline border-y hairline">
           {filtered.map(a => (
             <li key={a.id}>
-              <a href={a.href || '#'} className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr_auto] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
+              <a href={a.href} className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr_auto] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
                 <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] flex md:flex-col gap-3 md:gap-1">
                   <span className="text-[var(--accent)]">{a.cat}</span>
                   <span>{fmtDate(a.date)}</span>

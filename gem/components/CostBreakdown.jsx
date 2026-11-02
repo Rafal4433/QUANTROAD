@@ -59,11 +59,11 @@ function CostBreakdown({ costs, benchLabel = 'Benchmark', ikeActive = false }) {
         <Row label="Zwrot netto" gem={c.gem.netReturn} bench={c.bench.netReturn} kind="pct" highlight />
       </div>
 
-      {/* footer note — tylko gdy IKE/IKZE włączone */}
+      {/* footer note — tylko gdy IKE włączone */}
       {ikeActive && (
-        <div className="px-5 py-3 border-t hairline mono text-[10.5px] text-[var(--ink-faint)] flex items-center gap-2">
+        <div className="px-5 py-3 border-t hairline text-[13px] text-[var(--ink-dim)] flex items-center gap-2">
           <Ic.Shield width="11" height="11" className="text-[var(--ink-mute)]"/>
-          Tarcza IKE/IKZE oszczędza <span className="text-[var(--accent)] tnum">{(c.gem.taxesPaid + c.gem.finalTax).toLocaleString('pl-PL')} PLN</span> podatku w 15-letnim oknie.
+          Na IKE podatek Belki nie jest naliczany. Limity wpłat nie są modelowane.
         </div>
       )}
     </div>

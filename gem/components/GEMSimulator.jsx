@@ -1,53 +1,14 @@
 // Main shell — ładuje dane, uruchamia silnik, przekazuje wyniki do sub-komponentów.
 
-const DEFAULT_PARAMS = {
-  riskAssets:      ['nq', 'em', 'gld'],
-  safeAsset:       'dynamic',
-  benchmark:       'SP500',
-  lookback:        12,
-  whipsawBuffer:   0,
-  initialCapital:  50000,
-  monthlyDCA:      1500,
-  leverage:        1.0,
-  brokerFee:       0,
-  fxSpread:        0,
-  ikeActive:       false,
-  ensembleMomentum: true,
-  startDate:       '2000-01-01',
-  endDate:         '',
-};
-
-function formatDataMonth(dateKey) {
-  const [year, month] = dateKey.split('-').map(Number);
-  const date = new Date(year, month - 1, 1);
-  return date.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
-}
-
 function GEMSimulator() {
-  const [params, setParams] = React.useState(DEFAULT_PARAMS);
+  const [params, setParams] = React.useState(window.GEM_DEFAULT_PARAMS);
   const [historicalData, setHistoricalData] = React.useState(null);
   const [loadError, setLoadError] = React.useState(false);
   const [tab, setTab] = React.useState('log');
 
-  // Tweaks panel
-  const tweaksDefaults = /*EDITMODE-BEGIN*/{
-    "accent":       "#00e5a0",
-    "density":      "comfortable",
-    "showBench":    true,
-    "showDrawdown": true
-  }/*EDITMODE-END*/;
-  const [t, setTweak] = window.useTweaks ? window.useTweaks(tweaksDefaults) : [tweaksDefaults, () => {}];
-
-  React.useEffect(() => {
-    document.documentElement.style.setProperty('--accent', t.accent);
-    document.documentElement.style.setProperty('--accent-soft', t.accent + '1f');
-    document.documentElement.style.setProperty('--accent-line', t.accent + '59');
-  }, [t.accent]);
-
   // Ładowanie danych historycznych raz
   React.useEffect(() => {
-    fetch('historical_data.json', { cache: 'no-store' })
-      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    window.loadGemData()
       .then(data => setHistoricalData(data))
       .catch(() => setLoadError(true));
   }, []);
@@ -58,7 +19,7 @@ function GEMSimulator() {
 
     return {
       lastDate,
-      label: formatDataMonth(lastDate),
+      label: window.formatGemMonth(lastDate),
     };
   }, [historicalData]);
 
@@ -193,8 +154,8 @@ function GEMSimulator() {
                 GEM <span className="serif italic text-[var(--ink-dim)] font-normal">na rynku polskim</span>
               </h1>
               <p className="text-[12.5px] text-[var(--ink-mute)] mt-1.5 max-w-[60ch] leading-relaxed">
-                Symulator momentum dla polskiego inwestora — rotacja z podatkiem Belki, IKE/IKZE i spreadem FX.
-                {chartData && <span className="ml-2 text-[var(--ink-faint)]">· {chartData.meta.months} mies. · wdrożono {chartData.meta.totalCapitalDeployed.toLocaleString('pl-PL')} PLN</span>}
+                Symulator momentum dla polskiego inwestora — rotacja z podatkiem Belki, opcją IKE i kosztami transakcji.
+                {chartData && <span className="ml-2 text-[var(--ink-faint)]">· {chartData.meta.months} mies. · wpłacono {chartData.meta.totalCapitalDeployed.toLocaleString('pl-PL')} PLN</span>}
               </p>
             </div>
             <div className="flex flex-col items-start sm:items-end gap-2">
@@ -204,7 +165,7 @@ function GEMSimulator() {
                     dane rynkowe
                   </div>
                   <div className="mt-0.5 text-[12px] text-[var(--ink-dim)]">
-                    do <span className="text-[var(--ink)]">{dataStatus.label}</span>
+                    <span className="text-[var(--ink)]">{dataStatus.label}</span>
                     <span className="text-[var(--ink-faint)]"> · zamknięcie miesiąca</span>
                   </div>
                   <div className="mt-0.5 mono text-[10px] uppercase tracking-[.12em] text-[var(--ink-faint)]">
@@ -227,11 +188,13 @@ function GEMSimulator() {
                 {/* CHART */}
                 <EquityCurveChart
                   data={chartData.equity}
-                  density={t.density}
-                  showBench={t.showBench}
-                  showDrawdown={t.showDrawdown}
+                  density="comfortable"
+                  showBench
+                  showDrawdown
                   benchLabel={benchLabel}
                 />
+
+                <Assumptions params={params} pendingTax={chartData.costs.gem.finalTax} benchLabel={benchLabel}/>
 
                 {/* LOWER TABBED PANEL */}
                 <div className="border hairline rounded-xl bg-[var(--bg-1)] overflow-hidden">
@@ -266,30 +229,27 @@ function GEMSimulator() {
           </div>
         </main>
       </div>
+    </div>
+  );
+}
 
-      {/* TWEAKS PANEL */}
-      {window.TweaksPanel && (
-        <window.TweaksPanel title="Tweaks">
-          <window.TweakSection title="Wygląd">
-            <window.TweakColor
-              label="Kolor akcentu"
-              value={t.accent}
-              onChange={v => setTweak('accent', v)}
-              options={['#00e5a0', '#5b8dee', '#ffb454', '#e7ecf3']}
-            />
-            <window.TweakRadio
-              label="Gęstość"
-              value={t.density}
-              onChange={v => setTweak('density', v)}
-              options={[{ value: 'compact', label: 'Compact' }, { value: 'comfortable', label: 'Comfort' }]}
-            />
-          </window.TweakSection>
-          <window.TweakSection title="Wykres">
-            <window.TweakToggle label="Pokaż benchmark" value={t.showBench} onChange={v => setTweak('showBench', v)}/>
-            <window.TweakToggle label="Panel drawdown"  value={t.showDrawdown} onChange={v => setTweak('showDrawdown', v)}/>
-          </window.TweakSection>
-        </window.TweaksPanel>
-      )}
+function Assumptions({ params, pendingTax, benchLabel }) {
+  const items = [
+    `Koszty: prowizja ${params.brokerFee}%, spread FX ${params.fxSpread}%. Domyślnie oba wynoszą 0%, więc wynik nie zawiera opłat, dopóki nie ustawisz ich w kroku 3.`,
+    'Waluta: wpłaty są w PLN, a zwroty pochodzą z notowań w USD. Zmiany kursu USD/PLN nie są liczone.',
+    'Benchmark: S&P 500 przybliża VTSMX (cały rynek USA), a MSCI World miks 60% VTSMX i 40% VGTSX.',
+    'Wskaźniki: CAGR to przybliżenie (wartość końcowa do średniego kapitału), nie stopa zwrotu z wpłat. Sharpe (stopa wolna 2,5%) i obsunięcie liczone są na saldzie z wpłatami, które je zniekształcają.',
+  ];
+  if (!params.ikeActive) {
+    items.push(`Podatek: krzywa i CAGR GEM nie zawierają podatku od niezrealizowanego zysku (${pendingTax.toLocaleString('pl-PL')} PLN na koniec), a ${benchLabel} już go zawiera. Do porównania używaj wartości netto w zakładce „Koszty i podatki”.`);
+  }
+
+  return (
+    <div className="border hairline rounded-xl bg-[var(--bg-1)] px-5 py-4">
+      <h3 className="text-[14px] font-medium text-[var(--ink)] mb-2">Założenia tego wyniku</h3>
+      <ul className="space-y-1.5 text-[13px] text-[var(--ink-dim)] leading-relaxed max-w-[90ch]">
+        {items.map(item => <li key={item}>{item}</li>)}
+      </ul>
     </div>
   );
 }
@@ -460,7 +420,7 @@ function Footer({ params, chartData }) {
         <span>{months} mies.</span>
       </div>
       <div className="flex items-center gap-3">
-        <span>dane: yahoo · stooq</span>
+        <span>dane: Yahoo</span>
         <span>·</span>
         <span>obliczono lokalnie</span>
       </div>

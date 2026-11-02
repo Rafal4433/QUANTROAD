@@ -106,7 +106,6 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
       <header className="flex items-end justify-between px-5 pt-4 pb-2">
         <div>
           <div className="flex items-center gap-2 text-[11px] mono uppercase tracking-[.12em] text-[var(--ink-mute)]">
-            <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
             backtest · {data[0]?.label} → {data[data.length - 1]?.label}
           </div>
           <h2 className="text-[15px] font-medium mt-1.5 text-[var(--ink)]">Krzywa kapitału</h2>

@@ -230,8 +230,8 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
               <Toggle
                 on={p.ikeActive}
                 onChange={v => upd('ikeActive', v)}
-                label="IKE / IKZE Shield"
-                desc="Tarcza podatkowa — 19% podatku Belki zwolnione przy spełnieniu warunków."
+                label="Konto IKE"
+                desc="Wyłącza podatek Belki. Limity wpłat nie są modelowane, a IKZE nie jest liczone."
               />
             </div>
           </div>

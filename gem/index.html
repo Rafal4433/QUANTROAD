@@ -11,7 +11,7 @@
 </script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>kwantowo.pl — finanse, dane i kod</title>
+<title>QuantRoad — finanse, dane i kod</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
@@ -23,9 +23,11 @@
 </head>
 <body class="min-h-screen">
 <div id="root"></div>
+<script src="components/gemEngine.js"></script>
 <script type="text/babel" src="components/icons.jsx"></script>
 <script type="text/babel" src="components/QRData.jsx"></script>
 <script type="text/babel" src="components/QRLayout.jsx"></script>
+<script type="text/babel" src="components/gemSummary.jsx"></script>
 <script type="text/babel">
 function NewsletterForm() {
   const [email, setEmail] = React.useState('');
@@ -91,21 +93,11 @@ function NewsletterForm() {
 
 function fmtDate(iso){ return new Date(iso).toLocaleDateString('pl-PL', { day:'2-digit', month:'short', year:'numeric' }); }
 
-function StatBlock({ label, value, suffix, sub }){
-  return (
-    <div>
-      <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">{label}</div>
-      <div className="display text-[40px] tnum mt-1.5">{value}{suffix && <span className="text-[18px] text-[var(--ink-mute)]"> {suffix}</span>}</div>
-      <div className="mono text-[10.5px] text-[var(--ink-faint)] mt-0.5">{sub}</div>
-    </div>
-  );
-}
-
 function HomePage(){
   const latest = QRData.articles[0];
   const recent = QRData.articles.slice(1, 5);
   const top3 = QRData.strategies.slice(0, 3);
-  const lastDigest = QRData.digests[0];
+  const { summary, failed } = window.useGemSummary();
 
   return (
     <>
@@ -141,15 +133,6 @@ function HomePage(){
             </div>
           </div>
 
-          <div className="lg:col-span-4 lg:pl-6 lg:border-l hairline">
-            <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">o blogu</div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-7">
-              <StatBlock label="Strategie" value={QRData.strategies.length} sub="śledzonych w symulatorze" />
-              <StatBlock label="Lat danych" value="25" sub="2000 do 2025" />
-              <StatBlock label="Artykuły" value={QRData.articles.length} sub="i kolejne w drodze" />
-              <StatBlock label="Dostęp" value="100" suffix="%" sub="bezpłatnie, bez paywall" />
-            </div>
-          </div>
         </div>
       </section>
 
@@ -158,18 +141,9 @@ function HomePage(){
         <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-7">
             <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatni artykuł</div>
-            <a href={latest.href || '#'} className="block group">
-              <div className="aspect-[16/10] rounded-xl border hairline bg-gradient-to-br from-[var(--bg-2)] to-[var(--bg-1)] relative overflow-hidden mb-6">
-                <div className="absolute inset-0 grid-dots opacity-50"></div>
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 60" preserveAspectRatio="none">
-                  <path d="M0,40 L8,38 L16,32 L24,28 L32,30 L40,22 L48,24 L56,18 L64,20 L72,12 L80,14 L88,8 L100,6"
-                        stroke="var(--accent)" strokeWidth="0.4" fill="none" vectorEffect="non-scaling-stroke"/>
-                  <path d="M0,40 L8,42 L16,44 L24,40 L32,46 L40,42 L48,48 L56,44 L64,50 L72,46 L80,52 L88,48 L100,54"
-                        stroke="var(--blue)" strokeWidth="0.3" fill="none" opacity="0.6" vectorEffect="non-scaling-stroke"/>
-                </svg>
-                <div className="absolute top-4 left-4 badge badge-buy">{latest.cat}</div>
-              </div>
+            <a href={latest.href} className="block group">
               <div className="flex items-center gap-3 text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">
+                <span className="badge badge-buy">{latest.cat}</span>
                 <span>{fmtDate(latest.date)}</span><span>·</span>
                 <span>{latest.readMin} min czytania</span>
               </div>
@@ -185,12 +159,12 @@ function HomePage(){
             </a>
           </div>
 
-          <aside className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
+          {recent.length > 0 && <aside className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
             <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatnio</div>
             <ul className="space-y-5">
               {recent.map(a => (
                 <li key={a.id} className="group">
-                  <a href="#" className="block">
+                  <a href={a.href} className="block">
                     <div className="flex items-center gap-3 text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1.5">
                       <span className="text-[var(--accent)]">{a.cat}</span>
                       <span>·</span>
@@ -205,9 +179,9 @@ function HomePage(){
               ))}
             </ul>
             <a href="artykuly.html" className="mt-6 inline-flex items-center gap-2 text-[12.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--accent)] transition">
-              Wszystkie {QRData.articles.length}+ artykułów <span>→</span>
+              Wszystkie artykuły <span>→</span>
             </a>
-          </aside>
+          </aside>}
         </div>
       </section>
 
@@ -219,7 +193,7 @@ function HomePage(){
               <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-2">strategie</div>
               <h2 className="serif text-[36px] tracking-[-0.01em] leading-tight">Co właściwie tu liczę.</h2>
               <p className="text-[13.5px] text-[var(--ink-mute)] mt-2 max-w-[56ch] leading-relaxed">
-                Każda strategia ma własny zestaw danych, kod backtestu i powtarzalny sygnał.
+                Na razie jedna strategia. Wyniki liczy ten sam silnik co symulator.
               </p>
             </div>
             <a href="strategie.html" className="text-[13px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--accent)] transition">
@@ -229,75 +203,36 @@ function HomePage(){
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {top3.map(s => (
-              <a key={s.id} href={s.id === 'gem' ? 'gem.html' : '#'} className="group border hairline rounded-xl bg-[var(--bg-1)] p-5 hover:border-[var(--line-2)] transition flex flex-col">
-                <div className="flex items-start justify-between mb-3">
-                  <div className={`badge ${s.status === 'live' ? 'badge-buy' : 'badge-pay'}`}>{s.status}</div>
-                  <div className="mono text-[10.5px] text-[var(--ink-faint)] tnum">od {s.since}</div>
-                </div>
+              <a key={s.id} href={s.href} className="group border hairline rounded-xl bg-[var(--bg-1)] p-5 hover:border-[var(--line-2)] transition flex flex-col">
                 <h3 className="text-[17px] tracking-[-0.01em] leading-snug group-hover:text-[var(--accent)] transition">{s.name}</h3>
-                <p className="text-[12.5px] text-[var(--ink-mute)] mt-2 leading-relaxed flex-1">{s.lede}</p>
-                <div className="grid grid-cols-3 gap-2 mt-5 pt-4 border-t hairline">
-                  <div>
-                    <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">CAGR</div>
-                    <div className="mono text-[14px] tnum text-[var(--accent)] mt-0.5">{s.cagr.toFixed(1)}%</div>
-                  </div>
-                  <div>
-                    <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Max DD</div>
-                    <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{s.dd.toFixed(1)}%</div>
-                  </div>
-                  <div>
-                    <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Sharpe</div>
-                    <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{s.sharpe.toFixed(2)}</div>
-                  </div>
-                </div>
+                <p className="text-[13px] text-[var(--ink-dim)] mt-2 leading-relaxed flex-1">{s.lede}</p>
+                {failed && <p className="text-[13px] text-[var(--ink-dim)] mt-5">Nie udało się wczytać wyników.</p>}
+                {summary && s.id === 'gem' && (
+                  <>
+                    <div className="grid grid-cols-3 gap-2 mt-5 pt-4 border-t hairline">
+                      <div>
+                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">CAGR</div>
+                        <div className="mono text-[14px] tnum text-[var(--accent)] mt-0.5">{summary.gem.cagr.toFixed(1)}%</div>
+                      </div>
+                      <div>
+                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Max DD</div>
+                        <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{summary.gem.maxDrawdown.toFixed(1)}%</div>
+                      </div>
+                      <div>
+                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Sharpe</div>
+                        <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{summary.gem.sharpe.toFixed(2)}</div>
+                      </div>
+                    </div>
+                    <p className="text-[13px] text-[var(--ink-dim)] mt-3 leading-relaxed">
+                      Ustawienia domyślne, {summary.from} – {summary.to}, bez prowizji. Założenia na stronie strategii.
+                    </p>
+                  </>
+                )}
               </a>
             ))}
           </div>
         </div>
       </section>
-
-      {/* DIGEST */}
-      {lastDigest && (
-      <section className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-7">
-            <div className="flex items-center gap-2 text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">
-              <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
-              digest · {fmtDate(lastDigest.date)}
-            </div>
-            <h2 className="serif text-[34px] tracking-[-0.01em] leading-tight">Co się działo w tym tygodniu.</h2>
-            {lastDigest.note && (
-              <p className="text-[14px] text-[var(--ink-dim)] mt-4 leading-relaxed">{lastDigest.note}</p>
-            )}
-            <div className="mt-6 space-y-2">
-              {lastDigest.articles.map((title, i) => (
-                <a key={i} href="#" className="flex items-start gap-2 group">
-                  <span className="mono text-[10px] text-[var(--accent)] mt-[5px]">→</span>
-                  <span className="text-[14.5px] group-hover:text-[var(--accent)] transition leading-snug">{title}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-          <aside className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">sygnały strategii</div>
-            <ul className="space-y-3">
-              {lastDigest.signals.map((s, i) => (
-                <li key={i} className="flex items-center justify-between py-2.5 border-b hairline last:border-0">
-                  <span className="text-[13px] text-[var(--ink-mute)]">{s.strat}</span>
-                  <span className={`mono text-[12px] px-2 py-0.5 rounded ${s.change ? 'badge badge-pay' : 'text-[var(--ink)] bg-[var(--bg-2)] border hairline'}`}>{s.asset}</span>
-                </li>
-              ))}
-            </ul>
-            {lastDigest.chart && (
-              <div className="mt-6 pt-5 border-t hairline">
-                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-2">wykres tygodnia</div>
-                <div className="text-[13px] text-[var(--ink-dim)]">{lastDigest.chart}</div>
-              </div>
-            )}
-          </aside>
-        </div>
-      </section>
-      )}
 
       {/* NEWSLETTER */}
       <section id="newsletter" className="border-b hairline">
@@ -308,8 +243,7 @@ function HomePage(){
               Jeden e-mail. <span className="italic text-[var(--accent)]">Zero szumu.</span>
             </h2>
             <p className="text-[14.5px] text-[var(--ink-dim)] mt-4 max-w-[60ch] leading-relaxed">
-              Co piątek krótkie podsumowanie: nowe artykuły, sygnały śledzonych strategii w tym tygodniu,
-              jeden wykres tygodnia. Bez clickbaitu, bez „premium content", bez sponsorów.
+              Dostaniesz e-mail, gdy pojawi się nowy artykuł albo analiza. Bez clickbaitu i bez „premium content".
             </p>
           </div>
           <div className="lg:col-span-5 lg:pl-8 lg:border-l hairline">

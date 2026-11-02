@@ -11,23 +11,21 @@
 </script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GEM Symulator — Global Equity Momentum dla polskiego inwestora · kwantowo.pl</title>
-<meta name="description" content="Interaktywny symulator strategii GEM (Global Equity Momentum) z pełnym modelem podatku Belka 19%, IKE/IKZE i spreadem FX. Przetestuj rotację momentum US, Ex-US i obligacji na danych od 2000 roku." />
+<title>GEM Symulator — Global Equity Momentum dla polskiego inwestora · QuantRoad</title>
+<meta name="description" content="Interaktywny symulator strategii GEM (Global Equity Momentum) z modelem podatku Belki 19%, opcją IKE i kosztami transakcji. Przetestuj rotację momentum na danych od 2000 roku." />
 <meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://kwantowo.pl/gem" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://kwantowo.pl/gem" />
 <meta property="og:title" content="GEM Symulator — Global Equity Momentum dla polskiego inwestora" />
-<meta property="og:description" content="Sprawdź ile zarobiłbyś stosując strategię momentum Antonacciego. Pełny model polskiego podatku Belka, IKE/IKZE, dane od 2000 roku. Obliczenia lokalnie w przeglądarce." />
-<meta property="og:site_name" content="kwantowo.pl" />
+<meta property="og:description" content="Sprawdź, jak strategia momentum wypada po podatku Belki. Opcja IKE, koszty transakcji, dane od 2000 roku. Obliczenia w przeglądarce." />
+<meta property="og:site_name" content="QuantRoad" />
 <meta property="og:locale" content="pl_PL" />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="GEM Symulator — Global Equity Momentum dla polskiego inwestora" />
-<meta name="twitter:description" content="Sprawdź ile zarobiłbyś stosując strategię momentum Antonacciego. Pełny model polskiego podatku Belka, IKE/IKZE, dane od 2000 roku." />
+<meta name="twitter:description" content="Sprawdź, jak strategia momentum wypada po podatku Belki. Opcja IKE, koszty transakcji, dane od 2000 roku." />
 
 <!-- Structured data -->
 <script type="application/ld+json">
@@ -35,15 +33,13 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "GEM Symulator",
-  "description": "Interaktywny symulator strategii Global Equity Momentum (Antonacci 2014) dla polskiego inwestora z modelem podatku Belka 19%, IKE/IKZE i spreadem FX.",
-  "url": "https://kwantowo.pl/gem",
+  "description": "Interaktywny symulator strategii Global Equity Momentum (Antonacci 2014) dla polskiego inwestora z modelem podatku Belki 19%, opcją IKE i kosztami transakcji.",
   "inLanguage": "pl",
   "applicationCategory": "FinanceApplication",
   "isAccessibleForFree": true,
   "publisher": {
     "@type": "Organization",
-    "name": "kwantowo.pl",
-    "url": "https://kwantowo.pl"
+    "name": "QuantRoad"
   }
 }
 </script>
@@ -60,10 +56,10 @@
 <body class="min-h-screen">
   <div id="root"></div>
   <script src="components/gemEngine.js"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
   <script type="text/babel" src="components/icons.jsx"></script>
   <script type="text/babel" src="components/QRData.jsx"></script>
   <script type="text/babel" src="components/QRLayout.jsx"></script>
+  <script type="text/babel" src="components/gemSummary.jsx"></script>
   <script type="text/babel" src="components/EquityCurveChart.jsx"></script>
   <script type="text/babel" src="components/SimulatorControls.jsx"></script>
   <script type="text/babel" src="components/KPIRow.jsx"></script>
