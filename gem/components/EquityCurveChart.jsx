@@ -12,7 +12,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
 
   React.useEffect(() => {
     if (!wrapRef.current) return;
-    const ro = new ResizeObserver((es) => setW(Math.max(640, es[0].contentRect.width)));
+    const ro = new ResizeObserver((es) => setW(Math.max(560, es[0].contentRect.width)));
     ro.observe(wrapRef.current);
     return () => ro.disconnect();
   }, []);
@@ -44,7 +44,8 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
   }
 
   const hasInvested = data[0]?.invested != null;
-  const rawMax = Math.max(...data.map(d => Math.max(d.gem, d.msci, hasInvested ? d.invested : 0)));
+  const hasGross = data[0]?.gross != null;
+  const rawMax = Math.max(...data.map(d => Math.max(d.gem, d.msci, hasInvested ? d.invested : 0, hasGross ? d.gross : 0)));
   const rawMin = Math.min(...data.map(d => Math.min(d.gem, d.msci, hasInvested ? d.invested : d.gem)));
   const yStep = niceStep(rawMax);
   const yMax = niceCeil(rawMax * 1.04, yStep);
@@ -65,7 +66,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
   const gemPath      = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${yAt(d.gem).toFixed(1)}`).join(' ');
   const benchPath    = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${yAt(d.msci).toFixed(1)}`).join(' ');
   const investedPath = hasInvested ? data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${yAt(d.invested).toFixed(1)}`).join(' ') : null;
-  const gemArea   = `${gemPath} L${xAt(data.length - 1)},${padT + equityH} L${padL},${padT + equityH} Z`;
+  const costArea  = hasGross ? data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${yAt(d.gross).toFixed(1)}`).join(' ') + ' ' + data.slice().reverse().map((d, j) => `L${xAt(data.length - 1 - j).toFixed(1)},${yAt(d.gem).toFixed(1)}`).join(' ') + ' Z' : null;
 
   const gemDdPath   = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${ddYAt(d.gemDd).toFixed(1)}`).join(' ');
   const benchDdPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xAt(i).toFixed(1)},${ddYAt(d.msciDd).toFixed(1)}`).join(' ');
@@ -91,7 +92,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
   const [hover, setHover] = React.useState(null);
   function onMove(e){
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const x = (e.clientX - rect.left) * W / rect.width;
     const i = Math.round(((x - padL) / (W - padL - padR)) * xRange);
     if (i >= 0 && i < data.length) setHover(i);
   }
@@ -102,46 +103,24 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
   const lastMsciPct = ((last.msci / lastBase - 1) * 100);
 
   return (
-    <div className="border hairline rounded-xl bg-[var(--bg-1)] overflow-hidden">
-      <header className="flex items-end justify-between px-5 pt-4 pb-2">
-        <div>
-          <div className="flex items-center gap-2 text-[11px] mono uppercase tracking-[.12em] text-[var(--ink-mute)]">
-            backtest · {data[0]?.label} → {data[data.length - 1]?.label}
-          </div>
-          <h2 className="text-[15px] font-medium mt-1.5 text-[var(--ink)]">Krzywa kapitału</h2>
-        </div>
-        <div className="flex items-center gap-5 text-[12px] mono flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-0.5 bg-[var(--accent)]"></span>
-            <span className="text-[var(--ink-dim)]">GEM</span>
-            <span className="text-[var(--accent)] tnum">{fmtPLNFull(last.gem)}</span>
-            <span className="text-[var(--ink-faint)] tnum">(+{lastGemPct.toFixed(1)}%)</span>
-          </div>
-          {showBench && (
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-0.5 bg-[var(--blue)] opacity-80"></span>
-              <span className="text-[var(--ink-dim)]">{benchLabel}</span>
-              <span className="text-[var(--blue)] tnum">{fmtPLNFull(last.msci)}</span>
-              <span className="text-[var(--ink-faint)] tnum">(+{lastMsciPct.toFixed(1)}%)</span>
-            </div>
-          )}
-          {hasInvested && (
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-0.5 border-t border-dashed border-[var(--ink-faint)] inline-block"></span>
-              <span className="text-[var(--ink-faint)]">Wpłacone</span>
-              <span className="text-[var(--ink-faint)] tnum">{fmtPLNFull(last.invested)}</span>
-            </div>
-          )}
+    <div>
+      <header className="flex items-baseline justify-between gap-3 flex-wrap px-5 pt-4 pb-1">
+        <div className="k-meta">{data[0]?.label} – {data[data.length - 1]?.label}</div>
+        <div className="flex items-center gap-x-4 gap-y-1 text-[13px] flex-wrap text-[var(--ink-dim)]">
+          <span className="flex items-center gap-1.5"><span className="w-4 border-t-[2.5px] border-[var(--ink)]"></span>GEM po kosztach</span>
+          {hasGross && <span className="flex items-center gap-1.5"><span className="w-4 h-2 bg-[var(--cost)]"></span>koszty i podatek</span>}
+          {showBench && <span className="flex items-center gap-1.5"><span className="w-4 border-t-2 border-[var(--blue)]"></span>{benchLabel}</span>}
+          {hasInvested && <span className="flex items-center gap-1.5"><span className="w-4 border-t border-dashed border-[var(--ink-faint)]"></span>wpłacone</span>}
         </div>
       </header>
 
       <div ref={wrapRef} className="relative px-2">
-        <svg width={W} height={H} onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }} onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
           {/* gridlines */}
           {yTickVals.map(v => (
             <g key={v}>
               <line x1={padL} x2={W - padR} y1={yAt(v)} y2={yAt(v)} stroke="var(--line)" strokeDasharray="2 4" />
-              <text x={padL - 8} y={yAt(v) + 3} fill="var(--ink-mute)" fontSize="10" textAnchor="end" className="mono">{fmtPLN(v)}</text>
+              <text x={padL - 8} y={yAt(v) + 3} fill="var(--ink-mute)" fontSize="12" textAnchor="end" className="mono">{fmtPLN(v)}</text>
             </g>
           ))}
 
@@ -149,7 +128,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
           {yAt(startVal) >= padT && yAt(startVal) <= padT + equityH && (
             <>
               <line x1={padL} x2={W - padR} y1={yAt(startVal)} y2={yAt(startVal)} stroke="var(--line-2)" strokeDasharray="4 3" />
-              <text x={padL - 8} y={yAt(startVal) - 3} fill="var(--ink-faint)" fontSize="9" textAnchor="end" className="mono">start</text>
+              <text x={padL - 8} y={yAt(startVal) - 3} fill="var(--ink-faint)" fontSize="12" textAnchor="end" className="mono">start</text>
             </>
           )}
 
@@ -157,7 +136,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
           {yearTicks.map(({ i, year }) => (
             <g key={year}>
               <line x1={xAt(i)} x2={xAt(i)} y1={padT} y2={padT + equityH} stroke="var(--line)" strokeDasharray="1 6" opacity=".6"/>
-              <text x={xAt(i)} y={padT + equityH + 14} fill="var(--ink-mute)" fontSize="10" textAnchor="middle" className="mono">{year}</text>
+              <text x={xAt(i)} y={padT + equityH + 14} fill="var(--ink-mute)" fontSize="12" textAnchor="middle" className="mono">{year}</text>
             </g>
           ))}
 
@@ -166,43 +145,27 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
             <path d={investedPath} stroke="var(--ink-faint)" strokeWidth="1.2" fill="none" strokeDasharray="4 3" opacity=".7" />
           )}
 
-          {/* gem area */}
-          <defs>
-            <linearGradient id="gemFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.18"/>
-              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
-            </linearGradient>
-          </defs>
-          <path d={gemArea} fill="url(#gemFill)" />
+          {/* koszty i podatek: różnica między wynikiem bez kosztów i podatku a wynikiem GEM */}
+          {costArea && <path d={costArea} fill="var(--cost)" fillOpacity="0.8" />}
 
           {/* bench */}
-          {showBench && <path d={benchPath} stroke="var(--blue)" strokeWidth="1.4" fill="none" opacity=".75" />}
+          {showBench && <path d={benchPath} stroke="var(--blue)" strokeWidth="1.8" fill="none" />}
           {/* gem */}
-          <path d={gemPath} stroke="var(--accent)" strokeWidth="1.8" fill="none" />
+          <path d={gemPath} stroke="var(--ink)" strokeWidth="2.4" fill="none" strokeLinejoin="round" />
 
           {/* drawdown panel */}
           {showDrawdown && (
             <>
-              <defs>
-                <linearGradient id="ddGemFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--accent)" stopOpacity="0"/>
-                  <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.28"/>
-                </linearGradient>
-                <linearGradient id="ddBenchFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--bad)" stopOpacity="0"/>
-                  <stop offset="100%" stopColor="var(--bad)" stopOpacity="0.32"/>
-                </linearGradient>
-              </defs>
 
               {/* panel background */}
               <rect x={padL} y={ddTop} width={W - padL - padR} height={ddH}
-                    fill="rgba(255,255,255,0.015)" stroke="var(--line)" />
+                    fill="none" stroke="var(--line)" />
 
               {/* section divider label */}
-              <text x={padL} y={padT + equityH + 18} fill="var(--ink-mute)" fontSize="10" className="mono" letterSpacing="2">
-                DRAWDOWN · obsunięcie kapitału
+              <text x={padL} y={padT + equityH + 18} fill="var(--ink-mute)" fontSize="12" className="mono" >
+                Obsunięcie kapitału
               </text>
-              <text x={W - padR} y={padT + equityH + 18} textAnchor="end" fill="var(--ink-faint)" fontSize="10" className="mono">
+              <text x={W - padR} y={padT + equityH + 18} textAnchor="end" fill="var(--ink-faint)" fontSize="12" className="mono">
                 niżej = gorzej
               </text>
 
@@ -210,22 +173,21 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
               {ddTickVals.map(v => (
                 <g key={v}>
                   <line x1={padL} x2={W - padR} y1={ddYAt(v)} y2={ddYAt(v)} stroke="var(--line)" strokeDasharray="2 4" opacity=".5"/>
-                  <text x={padL - 8} y={ddYAt(v) + 3} fill="var(--ink-mute)" fontSize="10" textAnchor="end" className="mono">{v}%</text>
+                  <text x={padL - 8} y={ddYAt(v) + 3} fill="var(--ink-mute)" fontSize="12" textAnchor="end" className="mono">{v}%</text>
                 </g>
               ))}
 
               {/* baseline */}
               <line x1={padL} x2={W - padR} y1={ddBaseline} y2={ddBaseline} stroke="var(--line-2)" strokeWidth="1" />
-              <text x={padL - 8} y={ddBaseline + 3} fill="var(--ink-dim)" fontSize="10" textAnchor="end" className="mono">0%</text>
-              <text x={padL - 8} y={ddYAt(ddMin) + 9} fill="var(--ink-mute)" fontSize="10" textAnchor="end" className="mono">{Math.round(ddMin)}%</text>
+              <text x={padL - 8} y={ddBaseline + 3} fill="var(--ink-dim)" fontSize="12" textAnchor="end" className="mono">0%</text>
+              <text x={padL - 8} y={ddYAt(ddMin) + 9} fill="var(--ink-mute)" fontSize="12" textAnchor="end" className="mono">{Math.round(ddMin)}%</text>
 
               {/* bench area + line (red) */}
-              <path d={benchDdArea} fill="url(#ddBenchFill)" />
-              <path d={benchDdPath} stroke="var(--bad)" strokeWidth="1.4" fill="none" opacity=".85" />
+              <path d={benchDdArea} fill="var(--blue)" fillOpacity="0.2" />
+              <path d={benchDdPath} stroke="var(--blue)" strokeWidth="1.2" fill="none" />
 
               {/* gem area + line (accent) */}
-              <path d={gemDdArea} fill="url(#ddGemFill)" />
-              <path d={gemDdPath} stroke="var(--accent)" strokeWidth="1.8" fill="none" />
+              <path d={gemDdPath} stroke="var(--ink)" strokeWidth="1.6" fill="none" />
 
               {/* hover crosshair on dd */}
               {hover != null && (
@@ -238,7 +200,7 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
           {hover != null && (
             <g pointerEvents="none">
               <line x1={xAt(hover)} x2={xAt(hover)} y1={padT} y2={padT + equityH} stroke="var(--ink-faint)" />
-              <circle cx={xAt(hover)} cy={yAt(data[hover].gem)} r="3" fill="var(--accent)" stroke="var(--bg-1)" strokeWidth="1.5"/>
+              <circle cx={xAt(hover)} cy={yAt(data[hover].gem)} r="3" fill="var(--ink)" stroke="var(--bg)" strokeWidth="1.5"/>
               {showBench && <circle cx={xAt(hover)} cy={yAt(data[hover].msci)} r="3" fill="var(--blue)" stroke="var(--bg-1)" strokeWidth="1.5"/>}
             </g>
           )}
@@ -250,39 +212,46 @@ function EquityCurveChart({ data, density = 'comfortable', showBench = true, sho
           const base    = hasInvested ? d.invested : startVal;
           const gemPct  = ((d.gem  / base - 1) * 100);
           const msciPct = ((d.msci / base - 1) * 100);
-          const tx = Math.min(W - 220, Math.max(8, xAt(hover) + 12));
+          const right = xAt(hover) > W / 2;
+          const pos = right ? { right: `${((W - xAt(hover) + 12) / W) * 100}%` } : { left: `${((xAt(hover) + 12) / W) * 100}%` };
           return (
-            <div className="absolute pointer-events-none bg-[var(--bg-2)] border hairline-2 rounded-md px-3 py-2 mono text-[11px] shadow-lg"
-                 style={{ left: tx, top: 12 }}>
-              <div className="text-[var(--ink-mute)] uppercase tracking-wider mb-1.5">{d.label}</div>
+            <div className="absolute pointer-events-none bg-[var(--ink)] text-[var(--bg)] rounded-sm px-3 py-2 mono text-[13px] z-10"
+                 style={{ ...pos, top: 12, width: 260 }}>
+              <div className="mb-1.5">{d.label}</div>
+              {hasGross && (
+                <div className="flex justify-between gap-6">
+                  <span>Bez kosztów i podatku</span>
+                  <span className="tnum">{fmtPLNFull(d.gross)}</span>
+                </div>
+              )}
               {hasInvested && (
-                <div className="flex justify-between gap-6 mb-1 pb-1 border-b hairline">
-                  <span className="text-[var(--ink-faint)]">Wpłacone</span>
-                  <span className="tnum text-[var(--ink-faint)]">{fmtPLNFull(d.invested)}</span>
+                <div className="flex justify-between gap-6 mb-1 pb-1 border-b border-current/30">
+                  <span className="opacity-75">Wpłacone</span>
+                  <span className="tnum opacity-75">{fmtPLNFull(d.invested)}</span>
                 </div>
               )}
               <div className="flex justify-between gap-6">
-                <span className="text-[var(--accent)]">GEM</span>
+                <span>GEM</span>
                 <span className="tnum">{fmtPLNFull(d.gem)}
-                  <span className="text-[var(--ink-faint)] ml-1">({gemPct >= 0 ? '+' : ''}{gemPct.toFixed(1)}%)</span>
+                  <span className="opacity-75 ml-1">({gemPct >= 0 ? '+' : ''}{gemPct.toFixed(1)}%)</span>
                 </span>
               </div>
               {showBench && (
                 <div className="flex justify-between gap-6">
-                  <span className="text-[var(--blue)]">{benchLabel}</span>
+                  <span className="opacity-75">{benchLabel}</span>
                   <span className="tnum">{fmtPLNFull(d.msci)}
-                    <span className="text-[var(--ink-faint)] ml-1">({msciPct >= 0 ? '+' : ''}{msciPct.toFixed(1)}%)</span>
+                    <span className="opacity-75 ml-1">({msciPct >= 0 ? '+' : ''}{msciPct.toFixed(1)}%)</span>
                   </span>
                 </div>
               )}
-              <div className="flex justify-between gap-6 mt-1.5 pt-1.5 border-t hairline">
-                <span className="text-[var(--ink-mute)]">DD GEM</span>
-                <span className="tnum text-[var(--bad)]">{d.gemDd.toFixed(1)}%</span>
+              <div className="flex justify-between gap-6 mt-1.5 pt-1.5 border-t border-current/30">
+                <span className="opacity-75">DD GEM</span>
+                <span className="tnum opacity-75">{d.gemDd.toFixed(1)}%</span>
               </div>
               {showBench && (
                 <div className="flex justify-between gap-6">
-                  <span className="text-[var(--blue)] opacity-75">DD {benchLabel}</span>
-                  <span className="tnum text-[var(--bad)] opacity-75">{d.msciDd.toFixed(1)}%</span>
+                  <span className="opacity-75">DD {benchLabel}</span>
+                  <span className="tnum opacity-75">{d.msciDd.toFixed(1)}%</span>
                 </div>
               )}
             </div>

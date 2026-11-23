@@ -10,11 +10,13 @@
   gtag('config', 'G-HT3RDRK7EY');
 </script>
 <meta charset="utf-8" />
+<script>try{var t=localStorage.getItem("kw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Artykuły · QuantRoad</title>
+<title>Artykuły · Kwantyka</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="qr.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -43,15 +45,12 @@ function ArticlesPage(){
 
   return (
     <>
-      <QRTopNav active="articles"/>
+      <QRTopNav active="home"/>
 
       {/* Header */}
       <section className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 pt-14 pb-10">
-          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">archiwum</div>
-          <h1 className="serif text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.02em]">
-            Wszystko, co dotąd <span className="italic text-[var(--accent)]">policzyłem</span>.
-          </h1>
+        <div className="k-wrap k-wide pt-14 pb-10">
+          <h1 className="k-h1">Wszystkie wpisy</h1>
           <p className="text-[15px] text-[var(--ink-dim)] mt-5 max-w-[64ch] leading-relaxed">
             Teksty o metrykach ryzyka, strategiach i podatkach.
           </p>
@@ -59,18 +58,18 @@ function ArticlesPage(){
 
         {/* Filters */}
         {SHOW_FILTERS && <div className="border-t hairline">
-          <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+          <div className="k-wrap k-wide py-4 flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-1.5 flex-wrap">
               {CATS.map(c => (
                 <button key={c} onClick={() => setCat(c)}
-                  className={`px-3 py-1.5 rounded-md text-[12px] transition border ${
+                  className={`px-3 py-1.5 rounded-sm text-[13px] transition border ${
                     cat === c
                       ? 'bg-[var(--accent-soft)] text-[var(--accent)] border-[var(--accent-line)]'
                       : 'bg-[var(--bg-2)] text-[var(--ink-mute)] hairline hover:text-[var(--ink)]'
                   }`}>{c}</button>
               ))}
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[var(--bg-2)] border hairline mono text-[11px] text-[var(--ink-mute)] focus-within:border-[var(--accent-line)]">
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm bg-[var(--bg-2)] border hairline mono text-[13px] text-[var(--ink-mute)] focus-within:border-[var(--accent-line)]">
               <Ic.Search width="11" height="11"/>
               <input value={q} onChange={e => setQ(e.target.value)} placeholder="szukaj w archiwum"
                      className="bg-transparent outline-none w-[180px] text-[var(--ink)] placeholder-[var(--ink-faint)]"/>
@@ -80,8 +79,8 @@ function ArticlesPage(){
       </section>
 
       {/* List */}
-      <section className="max-w-[1400px] mx-auto px-6 py-10">
-        {SHOW_FILTERS && <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-4">
+      <section className="k-wrap k-wide py-10">
+        {SHOW_FILTERS && <div className="text-[13px] mono text-[var(--ink-faint)] mb-4">
           {filtered.length} {filtered.length === 1 ? 'wynik' : 'wyników'}
           {cat !== 'Wszystkie' && <span> · {cat}</span>}
         </div>}
@@ -89,8 +88,8 @@ function ArticlesPage(){
         <ul className="divide-y hairline border-y hairline">
           {filtered.map(a => (
             <li key={a.id}>
-              <a href={a.href} className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr_auto] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
-                <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] flex md:flex-col gap-3 md:gap-1">
+              <a href={a.href} className="block px-2 py-6 grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 group hover:bg-[var(--bg-1)]/40 transition">
+                <div className="text-[13px] mono text-[var(--ink-faint)] flex md:flex-col gap-3 md:gap-1">
                   <span className="text-[var(--accent)]">{a.cat}</span>
                   <span>{fmtDate(a.date)}</span>
                   <span>{a.readMin} min</span>
@@ -100,20 +99,18 @@ function ArticlesPage(){
                   <p className="text-[13.5px] text-[var(--ink-mute)] mt-2 max-w-[72ch] leading-relaxed">{a.lede}</p>
                   <div className="mt-3 flex items-center gap-1.5 flex-wrap">
                     {a.tags.map(t => (
-                      <span key={t} className="px-2 py-0.5 rounded text-[10.5px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
+                      <span key={t} className="px-2 py-0.5 rounded text-[13px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
                     ))}
                   </div>
                 </div>
-                <div className="hidden md:flex items-center text-[var(--ink-faint)] group-hover:text-[var(--accent)] transition">
-                  <span className="text-[24px]">→</span>
-                </div>
+
               </a>
             </li>
           ))}
         </ul>
 
         {filtered.length === 0 && (
-          <div className="py-16 text-center mono text-[12px] text-[var(--ink-mute)] uppercase tracking-[.14em]">
+          <div className="py-16 text-center mono text-[13px] text-[var(--ink-mute)]">
             brak wyników · spróbuj innej kategorii
           </div>
         )}

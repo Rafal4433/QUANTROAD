@@ -23,9 +23,9 @@ function Section({ step, title, hint, children }) {
   return (
     <section className="px-5 py-5 border-b hairline">
       <header className="flex items-center gap-2 mb-4">
-        <span className="step-num active">{step}</span>
+        {step && <span className="step-num active">{step}</span>}
         <h3 className="text-[13px] font-medium tracking-[-0.01em]">{title}</h3>
-        {hint && <span className="ml-auto text-[10px] mono uppercase tracking-wider text-[var(--ink-faint)]">{hint}</span>}
+        {hint && <span className="ml-auto text-[13px] mono text-[var(--ink-faint)]">{hint}</span>}
       </header>
       {children}
     </section>
@@ -36,8 +36,8 @@ function Chip({ on, onClick, ticker, sub }) {
   return (
     <button onClick={onClick} className={`chip focus-ring justify-start w-full ${on ? 'on' : ''}`}>
       <span className="chip-dot shrink-0"></span>
-      <span className="mono text-[12px] font-semibold tracking-wide">{ticker}</span>
-      <span className="text-[10.5px] text-[var(--ink-mute)] truncate">· {sub}</span>
+      <span className="mono text-[13px] font-semibold">{ticker}</span>
+      <span className="text-[13px] text-[var(--ink-mute)] truncate">· {sub}</span>
     </button>
   );
 }
@@ -46,12 +46,12 @@ function Slider({ label, value, min, max, step = 1, suffix = '', onChange, hint 
   return (
     <label className="block">
       <div className="flex items-baseline justify-between mb-2">
-        <span className="text-[12px] text-[var(--ink-dim)]">{label}</span>
-        <span className="mono text-[12px] tnum text-[var(--ink)]">{value}{suffix}</span>
+        <span className="text-[13px] text-[var(--ink-dim)]">{label}</span>
+        <span className="mono text-[13px] tnum text-[var(--ink)]">{value}{suffix}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
              onChange={e => onChange(+e.target.value)} className="w-full focus-ring" />
-      {hint && <div className="text-[10.5px] text-[var(--ink-faint)] mono mt-1.5">{hint}</div>}
+      {hint && <div className="text-[13px] text-[var(--ink-faint)] mono mt-1.5">{hint}</div>}
     </label>
   );
 }
@@ -59,15 +59,15 @@ function Slider({ label, value, min, max, step = 1, suffix = '', onChange, hint 
 function NumInput({ label, value, onChange, suffix = 'PLN' }) {
   return (
     <label className="block">
-      <div className="text-[12px] text-[var(--ink-dim)] mb-1.5">{label}</div>
-      <div className="flex items-center gap-1 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
+      <div className="text-[13px] text-[var(--ink-dim)] mb-1.5">{label}</div>
+      <div className="flex items-center gap-1 bg-[var(--bg-2)] border hairline rounded-sm px-3 py-2 focus-within:border-[var(--line-2)]">
         <input
           type="text"
           value={value.toLocaleString('pl-PL')}
           onChange={e => onChange(+e.target.value.replace(/\D/g, '') || 0)}
           className="bg-transparent outline-none flex-1 mono text-[13px] tnum text-[var(--ink)]"
         />
-        <span className="mono text-[10.5px] text-[var(--ink-mute)] uppercase tracking-wider">{suffix}</span>
+        <span className="mono text-[13px] text-[var(--ink-mute)]">{suffix}</span>
       </div>
     </label>
   );
@@ -75,17 +75,17 @@ function NumInput({ label, value, onChange, suffix = 'PLN' }) {
 
 function Toggle({ on, onChange, label, desc }) {
   return (
-    <button onClick={() => onChange(!on)} className="w-full flex items-start gap-3 text-left focus-ring rounded-md py-1">
+    <button onClick={() => onChange(!on)} className="w-full flex items-start gap-3 text-left focus-ring rounded-sm py-1">
       <span className={`toggle ${on ? 'on' : ''} mt-0.5 shrink-0`}></span>
       <span className="flex-1">
-        <span className="block text-[12.5px] text-[var(--ink)]">{label}</span>
-        {desc && <span className="block text-[10.5px] text-[var(--ink-mute)] mt-0.5 leading-relaxed">{desc}</span>}
+        <span className="block text-[13px] text-[var(--ink)]">{label}</span>
+        {desc && <span className="block text-[13px] text-[var(--ink-mute)] mt-0.5 leading-relaxed">{desc}</span>}
       </span>
     </button>
   );
 }
 
-function SimulatorControls({ params, setParams, historicalData = [] }) {
+function SimulatorControls({ params, setParams, historicalData = [], advanced = false }) {
   const p = params;
   const upd = (k, v) => setParams({ ...p, [k]: v });
   const firstDataYear = parseInt(historicalData[0]?.date, 10) || 1998;
@@ -100,29 +100,29 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
   };
 
   return (
-    <aside className="simulator-controls h-full flex flex-col bg-[var(--bg-1)] border-r hairline">
+    <div className="simulator-controls flex flex-col">
       {/* header */}
-      <div className="px-5 pt-5 pb-4 border-b hairline">
-        <div className="flex items-center gap-2 text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-2">
+      {!advanced && <div className="px-5 pt-5 pb-4 border-b hairline">
+        <div className="flex items-center gap-2 text-[13px] mono text-[var(--ink-faint)] mb-2">
           <span>panel</span>
           <span className="h-px bg-[var(--line)] flex-1"></span>
           <span>3 kroki</span>
         </div>
         <h2 className="text-[16px] font-medium tracking-[-0.01em]">Konfiguracja strategii</h2>
-        <p className="text-[11.5px] text-[var(--ink-mute)] mt-1 leading-relaxed">
+        <p className="text-[13px] text-[var(--ink-mute)] mt-1 leading-relaxed">
           Ustaw wszechświat aktywów, sygnał trendu i ekonomię. Wynik przelicza się na bieżąco.
         </p>
-      </div>
+      </div>}
 
-      <div className="flex-1 overflow-y-auto">
+      <div>
 
         {/* Krok 1 — Wszechświat aktywów */}
-        <Section step="1" title="Wszechświat aktywów" hint="zaznacz dowolne">
+        <Section step={advanced ? null : "1"} title="Wszechświat aktywów" hint="zaznacz dowolne">
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Aktywa ryzykowne</span>
-                <span className="mono text-[10.5px] text-[var(--accent)]">{p.riskAssets.length}/{RISKY.length}</span>
+                <span className="text-[13px] mono text-[var(--ink-mute)]">Aktywa ryzykowne</span>
+                <span className="mono text-[13px] text-[var(--accent)]">{p.riskAssets.length}/{RISKY.length}</span>
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {RISKY.map(a => (
@@ -134,7 +134,7 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
 
             <div>
               <div className="flex items-center justify-between mb-2.5">
-                <span className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)]">Bezpieczna przystań</span>
+                <span className="text-[13px] mono text-[var(--ink-mute)]">Bezpieczna przystań</span>
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {SAFE.map(a => (
@@ -148,10 +148,10 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
 
         {/* Zakres analizy */}
         <div className="px-5 py-4 border-b hairline">
-          <div className="text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] mb-3">Zakres analizy</div>
+          <div className="text-[13px] mono text-[var(--ink-mute)] mb-3">Zakres analizy</div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
-              <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">od</span>
+            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-sm px-3 py-2 focus-within:border-[var(--line-2)]">
+              <span className="mono text-[13px] text-[var(--ink-faint)]">od</span>
               <input
                 type="number" min={firstDataYear} max={lastDataYear}
                 value={parseInt(p.startDate) || 2000}
@@ -162,9 +162,9 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
                 className="bg-transparent outline-none w-full mono text-[13px] tnum text-[var(--ink)]"
               />
             </div>
-            <span className="mono text-[11px] text-[var(--ink-faint)]">—</span>
-            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2 focus-within:border-[var(--line-2)]">
-              <span className="mono text-[10px] text-[var(--ink-faint)] uppercase">do</span>
+            <span className="mono text-[13px] text-[var(--ink-faint)]">—</span>
+            <div className="flex-1 flex items-center gap-1.5 bg-[var(--bg-2)] border hairline rounded-sm px-3 py-2 focus-within:border-[var(--line-2)]">
+              <span className="mono text-[13px] text-[var(--ink-faint)]">do</span>
               <input
                 type="number" min={firstDataYear} max={lastDataYear}
                 value={p.endDate ? parseInt(p.endDate) : lastDataYear}
@@ -179,20 +179,20 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
         </div>
 
         {/* Krok 2 — Trend i benchmark */}
-        <Section step="2" title="Trend i punkt odniesienia" hint="sygnał">
+        <Section step={advanced ? null : "2"} title="Trend i punkt odniesienia" hint="sygnał">
           <div className="space-y-4">
             <div>
-              <div className="text-[12px] text-[var(--ink-dim)] mb-2">Benchmark</div>
+              <div className="text-[13px] text-[var(--ink-dim)] mb-2">Benchmark</div>
               <div className="seg w-full">
                 <button className={`flex-1 ${p.benchmark === 'MSCI' ? 'on' : ''}`} onClick={() => upd('benchmark', 'MSCI')}>MSCI World</button>
                 <button className={`flex-1 ${p.benchmark === 'SP500' ? 'on' : ''}`} onClick={() => upd('benchmark', 'SP500')}>S&P 500</button>
               </div>
             </div>
 
-            <div className="bg-[var(--bg-2)] border hairline rounded-md px-3 py-2.5 flex items-center justify-between gap-3">
+            <div className="bg-[var(--bg-2)] border hairline rounded-sm px-3 py-2.5 flex items-center justify-between gap-3">
               <div className="flex items-baseline gap-2 min-w-0">
-                <span className="text-[12px] text-[var(--ink)] shrink-0">Algorytm trendu</span>
-                <span className="text-[10px] text-[var(--ink-faint)] mono truncate">
+                <span className="text-[13px] text-[var(--ink)] shrink-0">Algorytm trendu</span>
+                <span className="text-[13px] text-[var(--ink-faint)] mono truncate">
                   {p.ensembleMomentum ? 'ensemble · 3M · 6M · 12M' : `prosty · ${p.lookback}M ROC`}
                 </span>
               </div>
@@ -209,42 +209,35 @@ function SimulatorControls({ params, setParams, historicalData = [] }) {
         </Section>
 
         {/* Krok 3 — Ekonomia portfela */}
-        <Section step="3" title="Ekonomia portfela" hint="koszty">
+        <Section step={advanced ? null : "3"} title={advanced ? "Waluta i dźwignia" : "Ekonomia portfela"} hint="koszty">
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            {!advanced && <div className="grid grid-cols-2 gap-3">
               <NumInput label="Kapitał startowy" value={p.initialCapital} onChange={v => upd('initialCapital', v)} />
               <NumInput label="Miesięczne DCA"   value={p.monthlyDCA}     onChange={v => upd('monthlyDCA', v)} />
-            </div>
+            </div>}
 
             <div className="space-y-3 pt-1">
               <Slider label="Dźwignia marginowa" value={p.leverage} min={1} max={3} step={0.1} suffix="×"
                       onChange={v => upd('leverage', v)}
                       hint={p.leverage > 1 ? `Zwiększa ekspozycję ${p.leverage.toFixed(1)}× — ryzyko rośnie proporcjonalnie` : null} />
-              <Slider label="Opłata brokera" value={p.brokerFee} min={0} max={1} step={0.05} suffix="%"
-                      onChange={v => upd('brokerFee', v)} />
+              {!advanced && <Slider label="Opłata brokera" value={p.brokerFee} min={0} max={1} step={0.05} suffix="%"
+                      onChange={v => upd('brokerFee', v)} />}
               <Slider label="Spread FX" value={p.fxSpread} min={0} max={0.5} step={0.02} suffix="%"
                       onChange={v => upd('fxSpread', v)} />
             </div>
 
-            <div className="bg-[var(--bg-2)] border hairline rounded-md p-3 space-y-3">
+            {!advanced && <div className="bg-[var(--bg-2)] border hairline rounded-sm p-3 space-y-3">
               <Toggle
                 on={p.ikeActive}
                 onChange={v => upd('ikeActive', v)}
                 label="Konto IKE"
                 desc="Wyłącza podatek Belki. Limity wpłat nie są modelowane, a IKZE nie jest liczone."
               />
-            </div>
+            </div>}
           </div>
         </Section>
       </div>
-
-      {/* footer */}
-      <div className="px-5 py-4 border-t hairline">
-        <div className="mono text-[10.5px] text-[var(--ink-faint)] text-center uppercase tracking-[.14em]">
-          {p.riskAssets.length} ryzykownych · {p.safeAsset} · IKE {p.ikeActive ? 'ON' : 'OFF'}
-        </div>
-      </div>
-    </aside>
+    </div>
   );
 }
 

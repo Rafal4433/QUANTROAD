@@ -1,9 +1,9 @@
 // Shared layout: top nav + footer used on every page.
 
 const NAV = [
-  { id:'home',       label:'Start',     href:'index.html' },
-  { id:'articles',   label:'Artykuły',  href:'artykuly.html' },
-  { id:'strategies', label:'Strategie', href:'strategie.html' },
+  { id:'home',       label:'Wpisy',     href:'index.html' },
+  { id:'strategies', label:'Strategie', href:'strategie.html', mobileHidden:true },
+  { id:'tools',      label:'Symulator GEM', href:'gem.html' },
 ];
 
 /* ── Contact Modal ─────────────────────────────────────────── */
@@ -32,18 +32,18 @@ function QRContactModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.55)',  }}
       onClick={handleBackdrop}
     >
       <div
-        className="w-full max-w-md rounded-xl border hairline bg-[var(--bg-1)] shadow-2xl p-6 relative"
+        className="w-full max-w-md rounded-sm border border-[var(--ink)] bg-[var(--bg)] p-6 relative"
         onClick={e => e.stopPropagation()}
       >
         {/* header */}
         <div className="flex items-center justify-between mb-5">
           <div>
             <div className="text-[15px] font-semibold">Napisz do mnie</div>
-            <div className="mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mt-0.5">kontakt</div>
+            <div className="text-[13px] text-[var(--ink-mute)] mt-0.5">kontakt</div>
           </div>
           <button
             onClick={onClose}
@@ -61,7 +61,7 @@ function QRContactModal({ onClose }) {
             <div className="text-[13px] text-[var(--ink-mute)] mt-1">Odezwę się najszybciej jak mogę.</div>
             <button
               onClick={onClose}
-              className="mt-5 px-4 py-2 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition"
+              className="mt-5 px-4 py-2 rounded-sm bg-[var(--accent)] text-[var(--accent-ink)] text-[13px] font-semibold hover:brightness-110 transition"
             >
               Zamknij
             </button>
@@ -77,7 +77,7 @@ function QRContactModal({ onClose }) {
             <input type="hidden" name="form-name" value="kontakt" />
 
             <div>
-              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">
+              <label className="block text-[13px] text-[var(--ink-mute)] mb-1">
                 Imię i nazwisko
               </label>
               <input
@@ -85,12 +85,12 @@ function QRContactModal({ onClose }) {
                 name="imie_nazwisko"
                 required
                 placeholder="Jan Kowalski"
-                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
+                className="w-full rounded-sm border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
               />
             </div>
 
             <div>
-              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">
+              <label className="block text-[13px] text-[var(--ink-mute)] mb-1">
                 E-mail
               </label>
               <input
@@ -98,24 +98,24 @@ function QRContactModal({ onClose }) {
                 name="email"
                 required
                 placeholder="jan@example.com"
-                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
+                className="w-full rounded-sm border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
               />
             </div>
 
             <div>
-              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">
+              <label className="block text-[13px] text-[var(--ink-mute)] mb-1">
                 Telefon <span className="normal-case tracking-normal opacity-60">(opcjonalnie)</span>
               </label>
               <input
                 type="tel"
                 name="telefon"
                 placeholder="+48 600 000 000"
-                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
+                className="w-full rounded-sm border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
               />
             </div>
 
             <div>
-              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">
+              <label className="block text-[13px] text-[var(--ink-mute)] mb-1">
                 Wiadomość
               </label>
               <textarea
@@ -123,12 +123,12 @@ function QRContactModal({ onClose }) {
                 required
                 rows={4}
                 placeholder="Twoja wiadomość…"
-                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition resize-none"
+                className="w-full rounded-sm border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition resize-none"
               />
             </div>
 
             {status === 'err' && (
-              <div className="text-[12px] text-red-400">
+              <div className="text-[13px] text-[var(--bad)]">
                 Nie udało się wysłać wiadomości. Spróbuj ponownie.
               </div>
             )}
@@ -136,7 +136,7 @@ function QRContactModal({ onClose }) {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-sm bg-[var(--accent)] text-[var(--accent-ink)] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {status === 'sending' ? 'Wysyłanie…' : 'Wyślij wiadomość'}
             </button>
@@ -182,17 +182,17 @@ function QRNewsletterModal({ onClose }) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.55)',  }}
       onClick={handleBackdrop}
     >
       <div
-        className="w-full max-w-md rounded-xl border hairline bg-[var(--bg-1)] shadow-2xl p-6 relative"
+        className="w-full max-w-md rounded-sm border border-[var(--ink)] bg-[var(--bg)] p-6 relative"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
           <div>
             <div className="text-[15px] font-semibold">Newsletter</div>
-            <div className="mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mt-0.5">bezpłatnie</div>
+            <div className="text-[13px] text-[var(--ink-mute)] mt-0.5">bezpłatnie</div>
           </div>
           <button
             onClick={onClose}
@@ -208,7 +208,7 @@ function QRNewsletterModal({ onClose }) {
             <div className="text-[13px] text-[var(--ink-mute)] mt-1">Sprawdź skrzynkę — możliwe że trafiło do spamu.</div>
             <button
               onClick={onClose}
-              className="mt-5 px-4 py-2 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition"
+              className="mt-5 px-4 py-2 rounded-sm bg-[var(--accent)] text-[var(--accent-ink)] text-[13px] font-semibold hover:brightness-110 transition"
             >Zamknij</button>
           </div>
         ) : (
@@ -217,23 +217,23 @@ function QRNewsletterModal({ onClose }) {
               Backtesty, błędy, surowy research. Bez clickbaitu, bez „sygnałów premium".
             </p>
             <div>
-              <label className="block mono text-[10.5px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">E-mail</label>
+              <label className="block text-[13px] text-[var(--ink-mute)] mb-1">E-mail</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="ty@example.com"
-                className="w-full rounded-md border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
+                className="w-full rounded-sm border hairline bg-[var(--bg-2)] px-3 py-2 text-[13px] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none focus:border-[var(--accent)] transition"
               />
             </div>
             {status === 'err' && (
-              <div className="text-[12px] text-red-400">{errMsg}</div>
+              <div className="text-[13px] text-[var(--bad)]">{errMsg}</div>
             )}
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full py-2.5 rounded-sm bg-[var(--accent)] text-[var(--accent-ink)] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {status === 'sending' ? 'Zapisuję…' : 'Zapisz się'}
             </button>
@@ -244,49 +244,55 @@ function QRNewsletterModal({ onClose }) {
   );
 }
 
+/* ── Logo i przełącznik motywu ─────────────────────────────── */
+function QRLogo({ size = 32 }) {
+  return (
+    <svg viewBox="0 0 800 800" width={size} height={size} aria-hidden="true" style={{ display: 'block' }}>
+      <rect width="800" height="800" fill="#0E141C"/>
+      <g transform="translate(400 400) scale(1.12) translate(-400 -400)">
+        <rect x="230" y="215" width="100" height="370" fill="#E9E8E4"/>
+        <polygon points="372,400 488,400 583,215 467,215" fill="#E9E8E4"/>
+        <polygon points="372,400 488,400 583,585 467,585" fill="#E3A548"/>
+      </g>
+    </svg>
+  );
+}
+
+function QRThemeToggle() {
+  function toggle() {
+    const r = document.documentElement;
+    const dark = r.dataset.theme ? r.dataset.theme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('kw-theme', r.dataset.theme); } catch (e) {}
+  }
+  return (
+    <button type="button" onClick={toggle} className="k-theme" aria-label="Przełącz jasny i ciemny motyw" title="Jasny / ciemny">
+      <svg className="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg>
+      <svg className="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></g></svg>
+    </button>
+  );
+}
+
 /* ── Top Nav ───────────────────────────────────────────────── */
 function QRTopNav({ active = 'home' }) {
-  const [newsletterOpen, setNewsletterOpen] = React.useState(false);
-
   return (
-    <>
-      {newsletterOpen && <QRNewsletterModal onClose={() => setNewsletterOpen(false)} />}
-      <header className="border-b hairline glass sticky top-0 z-30">
-        <div className="max-w-[1400px] mx-auto h-14 px-6 flex items-center justify-between">
-          <a href="index.html" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
-              <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
-            </div>
-            <div className="leading-tight">
-              <div className="text-[14px] font-medium tracking-[-0.01em]">QuantRoad</div>
-            </div>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV.map(item => (
-              <a key={item.id}
-                 href={item.href}
-                 className={`px-3 py-1.5 rounded text-[13px] transition ${
-                   active === item.id
-                     ? 'text-[var(--ink)] bg-[var(--bg-2)]'
-                     : 'text-[var(--ink-mute)] hover:text-[var(--ink)]'
-                 }`}>
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setNewsletterOpen(true)}
-              className="hidden sm:inline-block px-3 py-1.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[12.5px] font-semibold hover:brightness-110 transition"
-            >
-              Newsletter
-            </button>
-          </div>
-        </div>
-      </header>
-    </>
+    <header>
+      <div className="k-wrap k-wide flex items-center justify-between gap-4 py-6">
+        <a href="index.html" className="flex items-center gap-2.5 shrink-0" aria-label="Kwantyka, strona główna">
+          <QRLogo size={28}/>
+          <span className="display-font text-[17px] sm:text-[19px]">Kwantyka</span>
+        </a>
+        <nav className="k-nav flex items-center gap-4 sm:gap-6 text-[14px] sm:text-[14.5px] text-[var(--ink-dim)]" aria-label="Główna">
+          {NAV.map(item => (
+            <a key={item.id} href={item.href} aria-current={active === item.id ? 'page' : undefined}
+               className={`whitespace-nowrap hover:text-[var(--ink)] ${item.mobileHidden ? 'hidden sm:inline' : ''}`}>
+              {item.label}
+            </a>
+          ))}
+          <QRThemeToggle/>
+        </nav>
+      </div>
+    </header>
   );
 }
 
@@ -297,50 +303,22 @@ function QRFooter() {
   return (
     <>
       {contactOpen && <QRContactModal onClose={() => setContactOpen(false)} />}
-
-      <footer className="border-t hairline mt-20 bg-[var(--bg-1)]">
-        <div className="max-w-[1400px] mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="col-span-2">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-md bg-[var(--accent)] flex items-center justify-center">
-                <span className="mono text-[13px] font-bold text-[#04261b]">Q</span>
-              </div>
-              <span className="text-[15px] font-medium">QuantRoad</span>
+      <footer className="mt-24 border-t hairline">
+        <div className="k-wrap k-wide py-8 flex flex-wrap items-start justify-between gap-6 text-[13.5px] text-[var(--ink-mute)]">
+          <div className="max-w-[44ch]">
+            <div className="flex items-center gap-2.5 text-[var(--ink)]">
+              <QRLogo size={22}/><span className="display-font text-[15px]">Kwantyka</span>
             </div>
-            <p className="text-[13px] text-[var(--ink-mute)] mt-3 leading-relaxed max-w-[44ch]">
-              Niezależny blog o ilościowym podejściu do inwestowania. Strategie i narzędzia.{' '}
-              <span className="text-[var(--ink-dim)]">Bez porad inwestycyjnych. Wszystko, co czytasz, to edukacja.</span>
-            </p>
+            <p className="mt-3 leading-relaxed">Backtesty, koszty i strategie sprawdzone na danych. Materiały edukacyjne, nie porada inwestycyjna.</p>
           </div>
-
-          <div>
-            <div className="text-[10.5px] mono uppercase tracking-[.16em] text-[var(--ink-faint)] mb-3">Czytaj</div>
-            <ul className="space-y-2 text-[13px]">
-              <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="artykuly.html">Wszystkie artykuły</a></li>
-              <li><a className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition" href="strategie.html">Katalog strategii</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <div className="text-[10.5px] mono uppercase tracking-[.16em] text-[var(--ink-faint)] mb-3">Kontakt</div>
-            <ul className="space-y-2 text-[13px]">
-              <li>
-                <button
-                  onClick={() => setContactOpen(true)}
-                  className="text-[var(--ink-dim)] hover:text-[var(--accent)] transition cursor-pointer bg-transparent border-0 p-0 text-[13px]"
-                >
-                  Napisz do mnie
-                </button>
-              </li>
-            </ul>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <a className="hover:text-[var(--ink)]" href="artykuly.html">Wpisy</a>
+            <a className="hover:text-[var(--ink)]" href="strategie.html">Strategie</a>
+            <a className="hover:text-[var(--ink)]" href="gem.html">Symulator GEM</a>
+            <button type="button" onClick={() => setContactOpen(true)} className="hover:text-[var(--ink)]">Kontakt</button>
           </div>
         </div>
-        <div className="border-t hairline">
-          <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3 mono text-[10.5px] uppercase tracking-[.14em] text-[var(--ink-faint)]">
-            <div>© {new Date().getFullYear()} QuantRoad · prywatny blog edukacyjny</div>
-            <div>nie stanowi porady inwestycyjnej</div>
-          </div>
-        </div>
+        <div className="k-wrap k-wide pb-10 text-[13px] text-[var(--ink-mute)]">© {new Date().getFullYear()} Kwantyka</div>
       </footer>
     </>
   );
@@ -349,3 +327,5 @@ function QRFooter() {
 window.QRTopNav = QRTopNav;
 window.QRFooter = QRFooter;
 window.QRContactModal = QRContactModal;
+window.QRNewsletterModal = QRNewsletterModal;
+window.QRLogo = QRLogo;
