@@ -10,16 +10,19 @@
   gtag('config', 'G-HT3RDRK7EY');
 </script>
 <meta charset="utf-8" />
+<script>try{var t=localStorage.getItem("kw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sharpe Ratio w praktyce · QuantRoad</title>
+<title>Sharpe Ratio w praktyce · Kwantyka</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="qr.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js" integrity="sha384-/AfDwVDXNopzPvhxMPQ11y1OCpR6mVkWx47qzSwIiquvxkcMkZddEzDNtIOtfCpk" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
 </head>
 <body class="min-h-screen">
@@ -75,7 +78,7 @@ const EQUITY = MONTHLY.map(d => {
 function Formula({ children }) {
   return (
     <div className="my-6 overflow-x-auto">
-      <div className="inline-block px-6 py-4 rounded-lg border hairline bg-[var(--bg-2)] mono text-[15px] text-[var(--ink)]">
+      <div className="inline-block px-6 py-4 rounded-sm border hairline bg-[var(--bg-2)] mono text-[15px] text-[var(--ink)]">
         {children}
       </div>
     </div>
@@ -84,43 +87,42 @@ function Formula({ children }) {
 
 function Callout({ type = 'info', children }) {
   const styles = {
-    info:    'border-[var(--accent)]   bg-[var(--accent)]/8   text-[var(--ink-dim)]',
-    warn:    'border-yellow-500/60     bg-yellow-500/8        text-[var(--ink-dim)]',
-    danger:  'border-red-500/60        bg-red-500/8           text-[var(--ink-dim)]',
+    info:    'border-[var(--ink)]  text-[var(--ink-dim)]',
+    warn:    'border-[var(--cost)] text-[var(--ink-dim)]',
+    danger:  'border-[var(--bad)]  text-[var(--ink-dim)]',
   };
-  const icons = { info: '→', warn: '⚠', danger: '✕' };
   return (
-    <div className={`my-5 border-l-2 pl-4 py-3 pr-4 rounded-r-md text-[13.5px] leading-relaxed ${styles[type]}`}>
-      <span className="mr-2 opacity-70">{icons[type]}</span>{children}
+    <div className={`my-5 border-l-2 pl-4 py-2 text-[15px] leading-relaxed ${styles[type]}`}>
+      {children}
     </div>
   );
 }
 
 function KpiCard({ label, value, sub, accent }) {
   return (
-    <div className="rounded-lg border hairline bg-[var(--bg-2)] p-4 text-center">
-      <div className="mono text-[10px] uppercase tracking-[.15em] text-[var(--ink-faint)] mb-1">{label}</div>
+    <div className="rounded-sm border hairline bg-[var(--bg-2)] p-4 text-center">
+      <div className="mono text-[13px] text-[var(--ink-faint)] mb-1">{label}</div>
       <div className={`display text-[36px] tnum ${accent ? 'text-[var(--accent)]' : ''}`}>{value}</div>
-      {sub && <div className="mono text-[10.5px] text-[var(--ink-faint)] mt-1">{sub}</div>}
+      {sub && <div className="mono text-[13px] text-[var(--ink-faint)] mt-1">{sub}</div>}
     </div>
   );
 }
 
 function SharpeScaleBar() {
   const bands = [
-    { range:'< 0',        label:'ujemny',    color:'#ef4444' },
-    { range:'0 – 0.5',   label:'słaby',     color:'#f97316' },
-    { range:'0.5 – 1.0', label:'przeciętny',color:'#eab308' },
-    { range:'1.0 – 2.0', label:'dobry',     color:'#22c55e' },
-    { range:'> 2.0',     label:'wybitny',   color:'#10b981' },
+    { range:'< 0',        label:'ujemny',    color:'#B4462F' },
+    { range:'0 – 0.5',   label:'słaby',     color:'#C9873A' },
+    { range:'0.5 – 1.0', label:'przeciętny',color:'#E3A548' },
+    { range:'1.0 – 2.0', label:'dobry',     color:'#6F8FB8' },
+    { range:'> 2.0',     label:'wybitny',   color:'#4A6A94' },
   ];
   return (
     <div className="my-6">
-      <div className="flex rounded-lg overflow-hidden border hairline">
+      <div className="flex rounded-sm overflow-hidden border hairline">
         {bands.map(b => (
           <div key={b.range} className="flex-1 py-3 px-2 text-center" style={{ background: b.color + '22' }}>
-            <div className="mono text-[10px] font-semibold" style={{ color: b.color }}>{b.range}</div>
-            <div className="text-[11px] text-[var(--ink-mute)] mt-0.5">{b.label}</div>
+            <div className="mono text-[13px] font-semibold" style={{ color: b.color }}>{b.range}</div>
+            <div className="text-[13px] text-[var(--ink-mute)] mt-0.5">{b.label}</div>
           </div>
         ))}
       </div>
@@ -153,8 +155,8 @@ function ReturnsBarChart() {
           const yB = d.b >= 0 ? H/2 + 10 - scaleB : H/2 + 10;
           return (
             <g key={d.m}>
-              <rect x={x} y={yA} width={W_BAR} height={scaleA} fill={d.a >= 0 ? 'var(--accent)' : '#ef4444'} opacity="0.85" rx="2"/>
-              <rect x={x + W_BAR + 3} y={yB} width={W_BAR} height={scaleB} fill={d.b >= 0 ? '#60a5fa' : '#f87171'} opacity="0.7" rx="2"/>
+              <rect x={x} y={yA} width={W_BAR} height={scaleA} fill={d.a >= 0 ? 'var(--ink)' : '#B4462F'} opacity="0.85" rx="2"/>
+              <rect x={x + W_BAR + 3} y={yB} width={W_BAR} height={scaleB} fill={d.b >= 0 ? '#6F8FB8' : '#B4462F'} opacity="0.7" rx="2"/>
               <text x={x + W_BAR} y={H + 26} textAnchor="middle" fontSize="9" fill="var(--ink-faint)">{d.m.slice(0,3)}</text>
             </g>
           );
@@ -162,7 +164,7 @@ function ReturnsBarChart() {
         {/* legenda */}
         <rect x={PAD} y={H + 32} width={8} height={8} fill="var(--accent)" rx="1"/>
         <text x={PAD + 11} y={H + 40} fontSize="10" fill="var(--ink-mute)">Portfel A (momentum)</text>
-        <rect x={PAD + 120} y={H + 32} width={8} height={8} fill="#60a5fa" rx="1"/>
+        <rect x={PAD + 120} y={H + 32} width={8} height={8} fill="#6F8FB8" rx="1"/>
         <text x={PAD + 133} y={H + 40} fontSize="10" fill="var(--ink-mute)">Portfel B (buy&amp;hold)</text>
       </svg>
     </div>
@@ -182,7 +184,7 @@ function EquityCurveChart() {
         />
         <Legend wrapperStyle={{ fontSize: 11 }}/>
         <Line type="monotone" dataKey="a" name="Portfel A" stroke="var(--accent)" strokeWidth={2} dot={false}/>
-        <Line type="monotone" dataKey="b" name="Portfel B" stroke="#60a5fa" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
+        <Line type="monotone" dataKey="b" name="Portfel B" stroke="#6F8FB8" strokeWidth={2} dot={false} strokeDasharray="4 2"/>
       </LineChart>
     </ResponsiveContainer>
   );
@@ -193,12 +195,12 @@ function EquityCurveChart() {
 function ArticlePage() {
   return (
     <>
-      <QRTopNav active="articles"/>
+      <QRTopNav active="home"/>
 
       {/* Hero */}
       <section className="border-b hairline">
         <div className="max-w-[780px] mx-auto px-6 pt-14 pb-10">
-          <div className="flex items-center gap-3 mono text-[10.5px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-5">
+          <div className="flex items-center gap-3 mono text-[13px] text-[var(--ink-faint)] mb-5">
             <span className="px-2 py-0.5 rounded bg-[var(--bg-2)] border hairline text-[var(--accent)]">Metryki</span>
             <span>·</span>
             <span>1 paź 2025</span>
@@ -215,7 +217,7 @@ function ArticlePage() {
 
           <div className="mt-6 flex gap-2 flex-wrap">
             {['ryzyko','metryki','sharpe'].map(t => (
-              <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
+              <span key={t} className="px-2 py-0.5 rounded text-[13px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
             ))}
           </div>
         </div>
@@ -237,16 +239,16 @@ function ArticlePage() {
         </Formula>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-6 text-[13px]">
-          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
-            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">R<sub>p</sub></div>
+          <div className="rounded-sm border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[13px] text-[var(--ink-faint)] mb-1">R<sub>p</sub></div>
             <div className="text-[var(--ink)]">Średni zwrot portfela (roczny lub miesięczny)</div>
           </div>
-          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
-            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">R<sub>f</sub></div>
+          <div className="rounded-sm border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[13px] text-[var(--ink-faint)] mb-1">R<sub>f</sub></div>
             <div className="text-[var(--ink)]">Stopa wolna od ryzyka (np. WIBOR 1M, bony skarbowe)</div>
           </div>
-          <div className="rounded-md border hairline bg-[var(--bg-2)] p-3">
-            <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1">σ<sub>p</sub></div>
+          <div className="rounded-sm border hairline bg-[var(--bg-2)] p-3">
+            <div className="mono text-[13px] text-[var(--ink-faint)] mb-1">σ<sub>p</sub></div>
             <div className="text-[var(--ink)]">Odchylenie standardowe zwrotów portfela</div>
           </div>
         </div>
@@ -287,8 +289,8 @@ function ArticlePage() {
           Wyższy Sharpe oznacza, że dodatkowe ryzyko jest lepiej wynagradzane.
         </p>
 
-        <div className="rounded-xl border hairline bg-[var(--bg-2)] p-4 mb-6">
-          <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">Krzywa kapitału (baza = 100)</div>
+        <div className="rounded-sm border hairline bg-[var(--bg-2)] p-4 mb-6">
+          <div className="mono text-[13px] text-[var(--ink-faint)] mb-3">Krzywa kapitału (baza = 100)</div>
           <EquityCurveChart/>
         </div>
 
@@ -330,7 +332,7 @@ function ArticlePage() {
               body: 'Wygładzanie zwrotów (np. miesięczne zamiast dziennych) sztucznie obniża odch. std. i zawyża Sharpe. Fundusze private equity korzystają z tego efektu.'
             },
           ].map(item => (
-            <div key={item.title} className="rounded-md border hairline bg-[var(--bg-2)] p-4">
+            <div key={item.title} className="rounded-sm border hairline bg-[var(--bg-2)] p-4">
               <div className="text-[13.5px] font-semibold mb-1">{item.title}</div>
               <div className="text-[13px] text-[var(--ink-mute)] leading-relaxed">{item.body}</div>
             </div>
@@ -350,9 +352,9 @@ function ArticlePage() {
           lub WIBOR 1M.
         </p>
 
-        <div className="rounded-lg border hairline bg-[var(--bg-3)] p-4 my-5 overflow-x-auto">
-          <div className="mono text-[10px] uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">pseudokod / JS</div>
-          <pre className="mono text-[12.5px] text-[var(--ink-dim)] leading-relaxed whitespace-pre">{`function sharpe(monthlyReturns, monthlyRf) {
+        <div className="rounded-sm border hairline bg-[var(--bg-3)] p-4 my-5 overflow-x-auto">
+          <div className="mono text-[13px] text-[var(--ink-faint)] mb-3">pseudokod / JS</div>
+          <pre className="mono text-[13px] text-[var(--ink-dim)] leading-relaxed whitespace-pre">{`function sharpe(monthlyReturns, monthlyRf) {
   const excess = monthlyReturns.map(r => r - monthlyRf);
   const mean   = excess.reduce((s, r) => s + r, 0) / excess.length;
   const std    = Math.sqrt(
@@ -381,12 +383,12 @@ function ArticlePage() {
 
         {/* nav do artykułów */}
         <div className="mt-16 pt-8 border-t hairline flex items-center justify-between">
-          <a href="artykuly.html" className="mono text-[11px] uppercase tracking-[.15em] text-[var(--ink-mute)] hover:text-[var(--ink)] transition">
+          <a href="artykuly.html" className="mono text-[13px] text-[var(--ink-mute)] hover:text-[var(--ink)] transition">
             ← Wszystkie artykuły
           </a>
           <div className="flex gap-2">
             {['ryzyko','metryki','sharpe'].map(t => (
-              <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
+              <span key={t} className="px-2 py-0.5 rounded text-[13px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
             ))}
           </div>
         </div>

@@ -10,8 +10,9 @@
   gtag('config', 'G-HT3RDRK7EY');
 </script>
 <meta charset="utf-8" />
+<script>try{var t=localStorage.getItem("kw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>GEM Symulator — Global Equity Momentum dla polskiego inwestora · QuantRoad</title>
+<title>Symulator GEM — Global Equity Momentum po podatku Belki · Kwantyka</title>
 <meta name="description" content="Interaktywny symulator strategii GEM (Global Equity Momentum) z modelem podatku Belki 19%, opcją IKE i kosztami transakcji. Przetestuj rotację momentum na danych od 2000 roku." />
 <meta name="robots" content="index, follow" />
 
@@ -19,7 +20,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:title" content="GEM Symulator — Global Equity Momentum dla polskiego inwestora" />
 <meta property="og:description" content="Sprawdź, jak strategia momentum wypada po podatku Belki. Opcja IKE, koszty transakcji, dane od 2000 roku. Obliczenia w przeglądarce." />
-<meta property="og:site_name" content="QuantRoad" />
+<meta property="og:site_name" content="Kwantyka" />
 <meta property="og:locale" content="pl_PL" />
 
 <!-- Twitter Card -->
@@ -39,14 +40,15 @@
   "isAccessibleForFree": true,
   "publisher": {
     "@type": "Organization",
-    "name": "QuantRoad"
+    "name": "Kwantyka"
   }
 }
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="qr.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -62,7 +64,6 @@
   <script type="text/babel" src="components/gemSummary.jsx"></script>
   <script type="text/babel" src="components/EquityCurveChart.jsx"></script>
   <script type="text/babel" src="components/SimulatorControls.jsx"></script>
-  <script type="text/babel" src="components/KPIRow.jsx"></script>
   <script type="text/babel" src="components/RebalancingLog.jsx"></script>
   <script type="text/babel" src="components/CostBreakdown.jsx"></script>
   <script type="text/babel" src="components/GEMSimulator.jsx"></script>
@@ -71,9 +72,10 @@
     function GEMPage(){
       return (
         <>
-          <QRTopNav active="strategies"/>
+          <QRTopNav active="tools"/>
           <GEMExplainer/>
-          <div className="border-t hairline"><GEMSimulator/></div>
+          <GEMSimulator/>
+          <GEMContext/>
           <QRFooter/>
         </>
       );

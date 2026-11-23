@@ -18,6 +18,27 @@ const GEM_DEFAULT_PARAMS = {
   endDate:         '',
 };
 
+// Symulator startuje z prowizją 0,2%, żeby wynik od razu pokazywał koszty.
+// Wyniki na innych stronach liczone są na GEM_DEFAULT_PARAMS (bez prowizji).
+const GEM_SIM_START_PARAMS = { ...GEM_DEFAULT_PARAMS, brokerFee: 0.2 };
+
+// Gotowe zestawy w prostym panelu symulatora.
+const GEM_PRESETS = {
+  kwantyka: { label: 'Kwantyka', desc: 'Nasdaq 100, rynki wschodzące, złoto',
+    params: { riskAssets: ['nq', 'em', 'gld'], safeAsset: 'dynamic', benchmark: 'SP500', ensembleMomentum: true, lookback: 12 } },
+  classic:  { label: 'Klasyczny GEM', desc: 'USA, rynki poza USA, obligacje, 12 miesięcy',
+    params: { riskAssets: ['usa', 'exus'], safeAsset: 'bonds', benchmark: 'MSCI', ensembleMomentum: false, lookback: 12 } },
+};
+
+function detectGemPreset(p) {
+  const same = (a, b) => a.slice().sort().join() === b.slice().sort().join();
+  for (const [id, { params: q }] of Object.entries(GEM_PRESETS)) {
+    if (same(p.riskAssets, q.riskAssets) && p.safeAsset === q.safeAsset && p.benchmark === q.benchmark
+        && p.ensembleMomentum === q.ensembleMomentum && p.lookback === q.lookback) return id;
+  }
+  return 'own';
+}
+
 // Klasyczny wariant Antonacciego: USA albo rynki poza USA, obligacje, 12 miesięcy.
 const GEM_CLASSIC_PARAMS = {
   riskAssets:       ['usa', 'exus'],
@@ -44,8 +65,8 @@ function formatGemMonth(dateKey) {
 
 function formatGemAmount(value) {
   return value >= 1_000_000
-    ? `${(value / 1_000_000).toFixed(2)} mln PLN`
-    : `${Math.round(value / 1_000)} tys. PLN`;
+    ? `${(value / 1_000_000).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mln PLN`
+    : `${Math.round(value / 1_000).toLocaleString('pl-PL')} tys. PLN`;
 }
 
 function lowestInRange(labels, series, from, to) {
@@ -97,6 +118,9 @@ function useGemSummary() {
 }
 
 window.GEM_DEFAULT_PARAMS = GEM_DEFAULT_PARAMS;
+window.GEM_SIM_START_PARAMS = GEM_SIM_START_PARAMS;
+window.GEM_PRESETS = GEM_PRESETS;
+window.detectGemPreset = detectGemPreset;
 window.loadGemData = loadGemData;
 window.formatGemMonth = formatGemMonth;
 window.formatGemAmount = formatGemAmount;

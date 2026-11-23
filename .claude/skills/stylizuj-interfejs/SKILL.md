@@ -1,11 +1,11 @@
 ---
 name: stylizuj-interfejs
 description: >
-  Użyj przy dodawaniu lub zmianie stylów strony QuantRoad: tokenów i klas w gem/qr.css
+  Użyj przy dodawaniu lub zmianie stylów strony Kwantyka: tokenów i klas w gem/qr.css
   oraz klas Tailwind w komponentach JSX i stronach HTML w gem/.
 ---
 
-## Stylizacja interfejsu QuantRoad
+## Stylizacja interfejsu Kwantyki
 
 Zadanie: $ARGUMENTS
 
@@ -23,10 +23,10 @@ Zadanie: $ARGUMENTS
 | Linie | `--line`, `--line-2` (klasy `.hairline`, `.hairline-2`) |
 | Tekst | `--ink`, `--ink-dim`, `--ink-mute`, `--ink-faint` |
 | Akcent | `--accent`, `--accent-soft`, `--accent-line` |
-| Stany | `--blue`, `--warn`, `--bad` |
+| Stany | `--blue` (benchmark), `--cost` / `--cost-ink` (koszty), `--warn`, `--bad` |
 
-Kontrast na `--bg`: `--ink-dim` 9.2:1, `--ink-mute` 4.18:1, `--ink-faint` 2.47:1.
-Tekstu do czytania nie składaj w `--ink-mute` ani `--ink-faint`.
+Kontrast na `--bg` (jasny): `--ink-dim` 8.3:1, `--ink-mute` 5.5:1, `--ink-faint` 4.9:1.
+`--cost` (bursztyn) tylko jako tło lub plama, tekst kosztów w `--cost-ink`.
 
 ### Zasady
 

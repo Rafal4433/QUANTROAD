@@ -10,11 +10,13 @@
   gtag('config', 'G-HT3RDRK7EY');
 </script>
 <meta charset="utf-8" />
+<script>try{var t=localStorage.getItem("kw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QuantRoad — finanse, dane i kod</title>
+<title>Kwantyka — backtesty, koszty i strategie</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="qr.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -58,203 +60,115 @@ function NewsletterForm() {
 
   if (status === 'ok') {
     return (
-      <div className="text-[var(--accent)] mono text-[13px] py-2.5">
-        ✓ Zapisano! Sprawdź skrzynkę.
-      </div>
+      <p className="text-[15px] text-[var(--ink-dim)] py-2.5">Zapisano. Sprawdź skrzynkę, wiadomość mogła trafić do spamu.</p>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-1.5">
-      <label className="block text-[12px] text-[var(--ink-dim)] mb-1">Twój e-mail</label>
-      <div className="flex gap-2">
+      <label htmlFor="nl-email" className="block text-[13.5px] text-[var(--ink-dim)] mb-1">Twój e-mail</label>
+      <div className="flex gap-2 flex-wrap">
         <input
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           placeholder="ty@example.com"
           required
-          className="flex-1 bg-[var(--bg-2)] border hairline rounded-md px-3 py-2.5 text-[14px] mono outline-none focus:border-[var(--accent-line)]"
+          id="nl-email"
+          className="k-input flex-1 basis-[220px]"
         />
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13px] font-semibold hover:brightness-110 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="k-btn disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {status === 'sending' ? 'Zapisuję…' : 'Zapisz się'}
         </button>
       </div>
       {status === 'err' && (
-        <div className="text-[11.5px] text-red-400 mono mt-0.5">{errMsg}</div>
+        <div className="text-[13px] text-[var(--bad)] mt-1">{errMsg}</div>
       )}
     </form>
   );
 }
 
 function fmtDate(iso){ return new Date(iso).toLocaleDateString('pl-PL', { day:'2-digit', month:'short', year:'numeric' }); }
+const pct = v => v.toLocaleString('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
 
 function HomePage(){
-  const latest = QRData.articles[0];
-  const recent = QRData.articles.slice(1, 5);
-  const top3 = QRData.strategies.slice(0, 3);
+  const articles = QRData.articles;
+  const latest = articles[0];
   const { summary, failed } = window.useGemSummary();
 
   return (
     <>
       <QRTopNav active="home"/>
+      <main className="k-wrap">
+        <p className="pt-6 text-[19px] leading-[1.5] max-w-[36ch] text-[var(--ink-dim)]">
+          <b className="font-semibold text-[var(--ink)]">Backtesty, koszty i strategie</b> sprawdzone na danych.
+          Ile naprawdę zostaje po spreadzie, prowizji i podatku Belki.
+        </p>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden border-b hairline">
-        <div className="absolute inset-0 grid-dots opacity-50 pointer-events-none"></div>
-        <div className="relative max-w-[1400px] mx-auto px-6 pt-16 lg:pt-24 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-8">
-            <h1 className="serif text-[56px] md:text-[88px] leading-[0.95] tracking-[-0.02em]">
-              Moje notatki<br/>
-              z inwestowania.<br/>
-              <span className="text-[0.65em] text-[var(--ink-mute)]">Dane, reguły, <span className="italic text-[var(--accent)]">wnioski.</span></span>
-            </h1>
-
-            <p className="text-[16px] md:text-[18px] text-[var(--ink-dim)] mt-7 max-w-[60ch] leading-relaxed">
-              Piszę o tym, jak inwestować mądrze. Strategie oparte na danych, polskie podatki
-              i koszty od kuchni. Konkretne liczby dla każdego, kto odkłada pieniądze
-              i chce wiedzieć, co z nimi robić.
-            </p>
-
-            <div className="mt-8 flex items-center gap-3 flex-wrap">
-              <a href="strategie.html" className="px-4 py-2.5 rounded-md bg-[var(--accent)] text-[#04261b] text-[13.5px] font-semibold hover:brightness-110 transition">
-                Katalog strategii →
-              </a>
-              <a href="artykuly.html" className="px-4 py-2.5 rounded-md bg-[var(--bg-2)] border hairline text-[13.5px] text-[var(--ink-dim)] hover:text-[var(--ink)] transition">
-                Wszystkie artykuły
-              </a>
-              <a href="#newsletter" className="text-[13px] text-[var(--ink-mute)] hover:text-[var(--ink)] transition px-2">
-                Newsletter →
-              </a>
-            </div>
+        <a href={latest.href} className="block mt-10 pt-7 k-rule group">
+          <div className="k-meta flex flex-wrap gap-x-4">
+            <span>{latest.cat}</span><span>{fmtDate(latest.date)}</span><span>{latest.readMin} min czytania</span>
           </div>
+          <h1 className="k-h2 mt-3 group-hover:underline decoration-2 underline-offset-[5px]">{latest.title}</h1>
+          <p className="mt-4 text-[16px] leading-relaxed text-[var(--ink-dim)] max-w-[60ch]">{latest.lede}</p>
+          <span className="inline-block mt-5 k-link text-[14.5px]">Czytaj wpis</span>
+        </a>
 
-        </div>
-      </section>
-
-      {/* FEATURED */}
-      <section className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-7">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatni artykuł</div>
-            <a href={latest.href} className="block group">
-              <div className="flex items-center gap-3 text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-3">
-                <span className="badge badge-buy">{latest.cat}</span>
-                <span>{fmtDate(latest.date)}</span><span>·</span>
-                <span>{latest.readMin} min czytania</span>
-              </div>
-              <h2 className="serif text-[36px] md:text-[44px] leading-[1.05] tracking-[-0.01em] group-hover:text-[var(--accent)] transition">
-                {latest.title}
-              </h2>
-              <p className="text-[14.5px] text-[var(--ink-dim)] mt-4 max-w-[60ch] leading-relaxed">{latest.lede}</p>
-              <div className="mt-5 flex items-center gap-2">
-                {latest.tags.map(t => (
-                  <span key={t} className="px-2 py-0.5 rounded text-[11px] mono bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">#{t}</span>
-                ))}
-              </div>
-            </a>
+        <section className="mt-16" aria-labelledby="h-wpisy">
+          <div className="k-rule pt-3 pb-1 flex items-baseline justify-between gap-4 flex-wrap">
+            <h2 id="h-wpisy" className="k-h3">Wszystkie wpisy</h2>
+            <span className="k-meta">{articles.length} {articles.length === 1 ? 'wpis' : 'wpisy'}</span>
           </div>
-
-          {recent.length > 0 && <aside className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-4">ostatnio</div>
-            <ul className="space-y-5">
-              {recent.map(a => (
-                <li key={a.id} className="group">
-                  <a href={a.href} className="block">
-                    <div className="flex items-center gap-3 text-[10.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)] mb-1.5">
-                      <span className="text-[var(--accent)]">{a.cat}</span>
-                      <span>·</span>
-                      <span>{fmtDate(a.date)}</span>
-                      <span>·</span>
-                      <span>{a.readMin} min</span>
-                    </div>
-                    <h3 className="text-[17px] tracking-[-0.01em] leading-[1.25] group-hover:text-[var(--accent)] transition">{a.title}</h3>
-                    <p className="text-[12.5px] text-[var(--ink-mute)] mt-1.5 leading-relaxed line-clamp-2">{a.lede}</p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <a href="artykuly.html" className="mt-6 inline-flex items-center gap-2 text-[12.5px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--accent)] transition">
-              Wszystkie artykuły <span>→</span>
+          {articles.map(a => (
+            <a key={a.id} href={a.href} className="k-post">
+              <span className="k-meta">{fmtDate(a.date)}</span>
+              <span>
+                <span className="k-post-t block font-semibold text-[17px] leading-snug">{a.title}</span>
+                <span className="block text-[14px] text-[var(--ink-mute)] mt-1">{a.cat} · {a.readMin} min</span>
+              </span>
+              <span></span>
             </a>
-          </aside>}
-        </div>
-      </section>
+          ))}
+        </section>
 
-      {/* STRATEGIES */}
-      <section className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-14">
-          <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
+        <section className="mt-16" aria-labelledby="h-narzedzia">
+          <div className="k-rule pt-3 pb-1"><h2 id="h-narzedzia" className="k-h3">Narzędzia</h2></div>
+          <a href="gem.html" className="mt-4 grid gap-6 sm:grid-cols-2 bg-[var(--bg-2)] p-6 group">
             <div>
-              <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-2">strategie</div>
-              <h2 className="serif text-[36px] tracking-[-0.01em] leading-tight">Co właściwie tu liczę.</h2>
-              <p className="text-[13.5px] text-[var(--ink-mute)] mt-2 max-w-[56ch] leading-relaxed">
-                Na razie jedna strategia. Wyniki liczy ten sam silnik co symulator.
+              <h3 className="display-font text-[22px] group-hover:underline decoration-2 underline-offset-4">Symulator GEM</h3>
+              <p className="mt-2 text-[15px] text-[var(--ink-dim)] leading-relaxed">
+                Global Equity Momentum z polskim podatkiem Belki, opcją IKE i kosztami, które ustawiasz sam.
               </p>
+              <span className="inline-block mt-4 k-link text-[14.5px]">Otwórz symulator</span>
             </div>
-            <a href="strategie.html" className="text-[13px] mono uppercase tracking-[.14em] text-[var(--ink-mute)] hover:text-[var(--accent)] transition">
-              Cały katalog →
-            </a>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {top3.map(s => (
-              <a key={s.id} href={s.href} className="group border hairline rounded-xl bg-[var(--bg-1)] p-5 hover:border-[var(--line-2)] transition flex flex-col">
-                <h3 className="text-[17px] tracking-[-0.01em] leading-snug group-hover:text-[var(--accent)] transition">{s.name}</h3>
-                <p className="text-[13px] text-[var(--ink-dim)] mt-2 leading-relaxed flex-1">{s.lede}</p>
-                {failed && <p className="text-[13px] text-[var(--ink-dim)] mt-5">Nie udało się wczytać wyników.</p>}
-                {summary && s.id === 'gem' && (
-                  <>
-                    <div className="grid grid-cols-3 gap-2 mt-5 pt-4 border-t hairline">
-                      <div>
-                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">CAGR</div>
-                        <div className="mono text-[14px] tnum text-[var(--accent)] mt-0.5">{summary.gem.cagr.toFixed(1)}%</div>
-                      </div>
-                      <div>
-                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Max DD</div>
-                        <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{summary.gem.maxDrawdown.toFixed(1)}%</div>
-                      </div>
-                      <div>
-                        <div className="text-[9.5px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">Sharpe</div>
-                        <div className="mono text-[14px] tnum text-[var(--ink)] mt-0.5">{summary.gem.sharpe.toFixed(2)}</div>
-                      </div>
-                    </div>
-                    <p className="text-[13px] text-[var(--ink-dim)] mt-3 leading-relaxed">
-                      Ustawienia domyślne, {summary.from} – {summary.to}, bez prowizji. Założenia na stronie strategii.
-                    </p>
-                  </>
-                )}
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NEWSLETTER */}
-      <section id="newsletter" className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7">
-            <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">newsletter</div>
-            <h2 className="serif text-[44px] tracking-[-0.02em] leading-tight">
-              Jeden e-mail. <span className="italic text-[var(--accent)]">Zero szumu.</span>
-            </h2>
-            <p className="text-[14.5px] text-[var(--ink-dim)] mt-4 max-w-[60ch] leading-relaxed">
-              Dostaniesz e-mail, gdy pojawi się nowy artykuł albo analiza. Bez clickbaitu i bez „premium content".
-            </p>
-          </div>
-          <div className="lg:col-span-5 lg:pl-8 lg:border-l hairline">
-            <NewsletterForm/>
-            <div className="mt-3 mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em]">
-              bezpłatnie · można wypisać jednym klikiem
+            <div className="self-center">
+              {failed && <p className="text-[14px] text-[var(--ink-dim)]">Nie udało się wczytać wyników.</p>}
+              {summary && (
+                <>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div><div className="k-meta">CAGR</div><div className="mono text-[20px] mt-1">{pct(summary.gem.cagr)}</div></div>
+                    <div><div className="k-meta">Maks. spadek</div><div className="mono text-[20px] mt-1">{pct(summary.gem.maxDrawdown)}</div></div>
+                    <div><div className="k-meta">Sharpe</div><div className="mono text-[20px] mt-1">{summary.gem.sharpe.toLocaleString('pl-PL', { minimumFractionDigits: 2 })}</div></div>
+                  </div>
+                  <p className="mt-3 text-[13.5px] text-[var(--ink-mute)] leading-relaxed">
+                    Ustawienia domyślne, {summary.from} – {summary.to}, bez prowizji, benchmark {summary.benchLabel}.
+                  </p>
+                </>
+              )}
             </div>
-          </div>
-        </div>
-      </section>
+          </a>
+        </section>
 
+        <section id="newsletter" className="mt-16 k-rule pt-5 grid gap-3" aria-labelledby="h-nl">
+          <h2 id="h-nl" className="display-font text-[20px]">Nowy wpis, jeden e-mail.</h2>
+          <p className="text-[15px] text-[var(--ink-dim)] max-w-[52ch]">Dostajesz wiadomość tylko wtedy, gdy pojawi się nowa analiza. Wypisujesz się jednym kliknięciem.</p>
+          <NewsletterForm/>
+        </section>
+      </main>
       <QRFooter/>
     </>
   );

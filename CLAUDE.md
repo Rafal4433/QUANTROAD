@@ -1,8 +1,8 @@
-# QuantRoad — CLAUDE.md
+# Kwantyka (repo quantroad) — CLAUDE.md
 
 ## WHAT
 
-**Polski symulator strategii GEM (Global Equity Momentum) i blog o inwestowaniu.**
+**Kwantyka (kwantyka.pl): polski blog o inwestowaniu z symulatorem strategii GEM (Global Equity Momentum).**
 Statyczna strona dla polskich inwestorów: rotacja momentum między aktywami ryzykownymi
 i bezpiecznymi z modelem podatku Belki 19%.
 
@@ -10,6 +10,9 @@ i bezpiecznymi z modelem podatku Belki 19%.
 - Strony HTML w `gem/`, JSX kompilowany w przeglądarce przez `@babel/standalone`
 - React 18 i ReactDOM z unpkg (UMD), komponenty dzielą się przez `window.*`
 - Tailwind z `cdn.tailwindcss.com` (klasy w JSX), tokeny i klasy wspólne w `gem/qr.css`
+- Fonty: Montserrat 700/800 (nagłówki), IBM Plex Sans (tekst), IBM Plex Mono (liczby)
+- Dwa motywy: jasny (papier i granat) i ciemny. Przełącznik w nagłówku zapisuje
+  `kw-theme` w localStorage, a skrypt w `<head>` każdej strony ustawia `data-theme`
 - Wykres GEM to własny SVG. Recharts 2 ładuje tylko `sharpe-ratio.html`
 - Netlify: `publish = "gem"`, funkcja `netlify/functions/subscribe.mjs` (MailerLite,
   zmienna `MAILERLITE_API_KEY`), Netlify Forms dla formularza `kontakt`
@@ -21,15 +24,17 @@ i bezpiecznymi z modelem podatku Belki 19%.
 ```
 gem/
 ├── index.html, gem.html, strategie.html, artykuly.html, sharpe-ratio.html
-├── qr.css                  — tokeny i klasy wspólne
+├── qr.css                  — tokeny, motywy i klasy wspólne (.k-*)
+├── logo.svg                — logo Kwantyki (favicon)
 ├── historical_data.json    — dane miesięczne od 1998, format niżej
 └── components/
     ├── gemEngine.js        — silnik, czysty JS, eksportuje window.runBacktest
-    ├── gemSummary.jsx      — domyślne parametry i wspólne wyniki dla stron
+    ├── gemSummary.jsx      — domyślne parametry, zestawy (GEM_PRESETS) i wspólne wyniki
     ├── GEMSimulator.jsx    — stan parametrów, wywołanie silnika, układ symulatora
-    ├── SimulatorControls.jsx, KPIRow.jsx, EquityCurveChart.jsx,
-    │   RebalancingLog.jsx, CostBreakdown.jsx, GEMExplainer.jsx
-    ├── QRLayout.jsx        — nawigacja, stopka, modale
+    ├── SimulatorControls.jsx — ustawienia zaawansowane (prop `advanced`)
+    ├── EquityCurveChart.jsx, RebalancingLog.jsx, CostBreakdown.jsx
+    ├── GEMExplainer.jsx    — nagłówek symulatora i GEMContext pod nim
+    ├── QRLayout.jsx        — logo, nawigacja, przełącznik motywu, stopka, modale
     ├── QRData.jsx          — lista artykułów i strategii (bez wyników liczbowych)
     └── icons.jsx
 netlify/functions/subscribe.mjs
@@ -48,6 +53,8 @@ w Node przez `vm`, podstawiając `window`.
 
 **Jedno źródło liczb.** Domyślne parametry i wyniki pokazywane poza symulatorem pochodzą
 z `gemSummary.jsx`, które woła `runBacktest`. Nie wpisuj wyników na stałe do treści.
+`GEM_DEFAULT_PARAMS` (bez prowizji) liczy wyniki na stronach. Symulator startuje
+z `GEM_SIM_START_PARAMS` (prowizja 0,2%), żeby od razu pokazać koszty.
 
 **Brak TypeScriptu to świadoma decyzja.** Nie dodawaj plików `.ts`, `.tsx` ani `tsconfig.json`.
 
@@ -85,7 +92,8 @@ Normalnie robi to `.github/workflows/update-data.yml` 3. dnia miesiąca.
 **Nowy parametr symulatora:**
 1. `gemSummary.jsx` — dodaj do `GEM_DEFAULT_PARAMS`
 2. `gemEngine.js` — obsłuż w `runBacktest()`
-3. `SimulatorControls.jsx` — dodaj kontrolkę
+3. `SimulatorControls.jsx` — dodaj kontrolkę (prosty panel w `GEMSimulator.jsx`
+   ma tylko zestaw, kwoty, koszt transakcji i IKE; reszta idzie do zaawansowanych)
 
 **Nowa strona:** utwórz HTML w `gem/`, dodaj link do `NAV` w `QRLayout.jsx`.
 
@@ -115,4 +123,7 @@ wszystkie publikowane wyniki.
 - Bez strzałek w przyciskach. Numeracja 01/02 tylko przy prawdziwych krokach.
 - Tekst co najmniej 13 px, kontrast co najmniej 4.5:1.
 
-Obecny wygląd strony jeszcze nie spełnia tych zasad. Nie kopiuj go do nowych elementów.
+**Styl Kwantyki:** papier `#E9E8E4` i granat `#0E141C`, bursztyn (`--cost`) wyłącznie
+dla kosztów i podatku, niebieski (`--blue`) dla benchmarku. Nagłówki opisowe, bez sloganów.
+Ramki proste, narożniki 2 px, bez cieni. Nie podpisuj treści imieniem ani nazwiskiem autora.
+Sprawdzaj oba motywy i szerokości 375 i 1440 px.

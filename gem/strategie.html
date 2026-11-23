@@ -10,11 +10,13 @@
   gtag('config', 'G-HT3RDRK7EY');
 </script>
 <meta charset="utf-8" />
+<script>try{var t=localStorage.getItem("kw-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Strategie · QuantRoad</title>
+<title>Strategie · Kwantyka</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="qr.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -48,18 +50,15 @@ function StrategiesPage(){
       <QRTopNav active="strategies"/>
 
       <section className="border-b hairline">
-        <div className="max-w-[1400px] mx-auto px-6 pt-14 pb-10">
-          <div className="text-[10.5px] mono uppercase tracking-[.18em] text-[var(--ink-faint)] mb-3">katalog</div>
-          <h1 className="serif text-[56px] md:text-[72px] leading-[0.98] tracking-[-0.02em]">
-            Strategie, które <span className="italic text-[var(--accent)]">faktycznie</span><br/>liczę.
-          </h1>
+        <div className="k-wrap k-wide pt-14 pb-10">
+          <h1 className="k-h1">Strategie</h1>
           <p className="text-[15px] text-[var(--ink-dim)] mt-5 max-w-[60ch] leading-relaxed">
             Każda ma backtest w symulatorze, a dane rynkowe odświeżają się co miesiąc.
           </p>
         </div>
       </section>
 
-      <section className="max-w-[1400px] mx-auto px-6 py-10">
+      <section className="k-wrap k-wide py-10">
         {summary && (
           <p className="text-[13px] text-[var(--ink-dim)] mb-6 leading-relaxed">
             Ustawienia domyślne, {summary.from} – {summary.to}, bez prowizji i spreadu. CAGR jest przybliżony. Pełne założenia są na stronie strategii.
@@ -70,9 +69,9 @@ function StrategiesPage(){
         )}
 
         {/* table-card list */}
-        <div className="border hairline rounded-xl bg-[var(--bg-1)] overflow-hidden">
+        <div className="border hairline rounded-sm bg-[var(--bg-1)] overflow-hidden">
           {/* head */}
-          <div className="hidden md:grid grid-cols-[1.6fr_2fr_180px_90px_90px_90px] gap-4 px-5 py-3 border-b hairline text-[10px] mono uppercase tracking-[.14em] text-[var(--ink-faint)]">
+          <div className="hidden md:grid grid-cols-[1.6fr_2fr_180px_90px_90px_90px] gap-4 px-5 py-3 border-b hairline text-[13px] mono text-[var(--ink-faint)]">
             <div>strategia</div>
             <div>opis</div>
             <div>krzywa</div>
@@ -88,14 +87,14 @@ function StrategiesPage(){
                  className="grid grid-cols-1 md:grid-cols-[1.6fr_2fr_180px_90px_90px_90px] gap-4 px-5 py-5 items-center border-b hairline last:border-b-0 hover:bg-[var(--bg-2)]/40 transition group">
                 <div>
                   <div className="text-[15px] tracking-[-0.01em] group-hover:text-[var(--accent)] transition">{s.name}</div>
-                  <div className="mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.12em] mt-1">{s.complexity} złożoność</div>
+                  <div className="mono text-[13px] text-[var(--ink-faint)] mt-1">{s.complexity} złożoność</div>
                 </div>
 
                 <div>
                   <p className="text-[13px] text-[var(--ink-dim)] leading-relaxed">{s.lede}</p>
                   <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                     {s.assets.map(a => (
-                      <span key={a} className="mono text-[10.5px] px-1.5 py-0.5 rounded bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">{a}</span>
+                      <span key={a} className="mono text-[13px] px-1.5 py-0.5 rounded bg-[var(--bg-2)] border hairline text-[var(--ink-mute)]">{a}</span>
                     ))}
                   </div>
                 </div>
@@ -106,22 +105,22 @@ function StrategiesPage(){
 
                 <div className="mono text-right tnum">
                   <div className="text-[16px] text-[var(--accent)]">{kpi ? `${kpi.cagr.toFixed(1)}%` : '—'}</div>
-                  <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">CAGR</div>
+                  <div className="text-[13px] text-[var(--ink-faint)] mt-0.5">CAGR</div>
                 </div>
                 <div className="mono text-right tnum">
                   <div className="text-[16px] text-[var(--ink)]">{kpi ? `${kpi.maxDrawdown.toFixed(1)}%` : '—'}</div>
-                  <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">Max DD</div>
+                  <div className="text-[13px] text-[var(--ink-faint)] mt-0.5">Max DD</div>
                 </div>
                 <div className="mono text-right tnum">
                   <div className="text-[16px] text-[var(--ink)]">{kpi ? kpi.sharpe.toFixed(2) : '—'}</div>
-                  <div className="text-[10px] text-[var(--ink-faint)] uppercase tracking-[.14em] mt-0.5">Sharpe</div>
+                  <div className="text-[13px] text-[var(--ink-faint)] mt-0.5">Sharpe</div>
                 </div>
               </a>
             );
           })}
         </div>
 
-        <div className="mt-6 mono text-[10.5px] text-[var(--ink-faint)] uppercase tracking-[.14em] flex items-center gap-3 flex-wrap">
+        <div className="mt-6 mono text-[13px] text-[var(--ink-faint)] flex items-center gap-3 flex-wrap">
           <span>dane: Yahoo Finance</span><span>·</span>
           <span>obliczono w przeglądarce</span>
         </div>

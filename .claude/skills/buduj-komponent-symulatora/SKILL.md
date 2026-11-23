@@ -16,10 +16,12 @@ Przeczytaj `gem/components/GEMSimulator.jsx`, `SimulatorControls.jsx` i `gemSumm
 ### Przepływ danych
 
 ```
-gemSummary.jsx        GEM_DEFAULT_PARAMS, loadGemData, useGemSummary
-GEMSimulator.jsx      params → useMemo(runBacktest) → chartData
-  ├── SimulatorControls  zmienia params przez setParams
-  ├── KPIRow             chartData.kpis, chartData.costs.gem.net
+gemSummary.jsx        GEM_DEFAULT_PARAMS, GEM_SIM_START_PARAMS, GEM_PRESETS,
+                      loadGemData, useGemSummary
+GEMSimulator.jsx      params → useMemo(runBacktest + przebieg bez kosztów) → chartData
+  ├── prosty panel       zestaw, kwoty, koszt transakcji, IKE
+  ├── SimulatorControls  ustawienia zaawansowane (advanced), setParams
+  ├── Kpi                chartData.kpis
   ├── EquityCurveChart   chartData.equity (własny SVG)
   ├── RebalancingLog     chartData.log
   ├── CostBreakdown      chartData.costs
